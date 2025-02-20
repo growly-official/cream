@@ -1,4 +1,4 @@
-// import 'reflect-metadata';
+import 'reflect-metadata';
 
 import { DirectClient } from '@elizaos/client-direct';
 import { AgentRuntime, elizaLogger, settings, stringToUuid, type Character } from '@elizaos/core';

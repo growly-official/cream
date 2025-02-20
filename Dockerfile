@@ -1,5 +1,5 @@
 # Use a specific Node.js version for better reproducibility
-FROM node:23.3.0-slim AS builder
+FROM node:23.7.0
 
 # Install pnpm globally and install necessary build tools
 RUN npm install -g bun && \
@@ -26,12 +26,12 @@ COPY bun.lockb ./
 
 # Install dependencies and build the project
 RUN bun install 
-RUN bun run build 
+# RUN bun run build 
 
-# Create dist directory and set permissions
-RUN mkdir -p /apps/agent/dist && \
-    chown -R node:node /apps/agent && \
-    chmod -R 755 /apps/agent
+# # Create dist directory and set permissions
+# RUN mkdir -p /apps/agent/dist && \
+#     chown -R node:node /apps/agent && \
+#     chmod -R 755 /apps/agent
 
 EXPOSE 3000 3005
 # Set the command to run the application

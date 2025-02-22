@@ -1,3 +1,0 @@
-[submodule "packages/chainsmith-sdk"]
-	path = packages/chainsmith-sdk
-	url = https://github.com/growly-official/chainsmith-sdk.git

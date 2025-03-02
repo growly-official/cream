@@ -1,15 +1,17 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "module": "NodeNext",
+    "module": "Preserve",
     "declaration": true,
     "removeComments": true,
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "allowImportingTsExtensions": true,
-    "noEmit": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
     "sourceMap": true,
     "baseUrl": "./",
     "incremental": true,
@@ -20,8 +22,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "composite": true
+    "esModuleInterop": true
   },
   "include": ["**/*.ts", "**/*.json"],
   "exclude": ["**/node_modules", "**/dist"]

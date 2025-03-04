@@ -9,7 +9,7 @@ import {
   TTokenPortfolio,
   TTokenPortfolioStats,
   TTokenTransferActivity,
-} from 'chainsmith-sdk/src/types';
+} from 'chainsmith-sdk/types';
 import { StateEventRegistry } from '../types';
 import { ConnectedWallet } from '@privy-io/react-auth';
 import { BackgroundChains, CurrentNativeChain } from '../chainsmith';

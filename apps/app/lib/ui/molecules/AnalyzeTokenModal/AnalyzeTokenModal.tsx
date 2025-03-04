@@ -1,4 +1,4 @@
-import { TMarketToken } from 'chainsmith-sdk/src/types';
+import { TMarketToken } from 'chainsmith-sdk/types';
 import { Modal } from '../../atoms';
 
 type Props = {

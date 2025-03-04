@@ -8,10 +8,9 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "tsup src/main.ts --format esm --dts",
-    "start": "tsc && node --loader ts-node/esm -r dotenv/config -r tsconfig-paths/register src/main.ts",
+    "start": "bunx tsx -r dotenv/config -r tsconfig-paths/register src/main.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "nest start --watch",
-    "dev:script": "tsc && node --loader ts-node/esm -r dotenv/config -r tsconfig-paths/register ./src/_scripts/index.ts",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -25,6 +24,7 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "chainsmith-sdk": "git+https://github.com/growly-official/chainsmith-sdk#ac86f56b692a09bb623ce7387b5a187426162b79",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },

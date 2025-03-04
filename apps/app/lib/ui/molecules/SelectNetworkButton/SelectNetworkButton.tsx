@@ -1,5 +1,5 @@
-import { countExistentialObject, iterateObject } from 'chainsmith-sdk/src/utils';
-import { TChainEcosystem, TChainName, TMultiEcosystem } from 'chainsmith-sdk/src/types';
+import { countExistentialObject, iterateObject } from 'chainsmith-sdk/utils';
+import { TChainEcosystem, TChainName, TMultiEcosystem } from 'chainsmith-sdk/types';
 import React, { useState } from 'react';
 import { Atoms, Molecules } from '@/ui';
 import pluralize from 'pluralize';

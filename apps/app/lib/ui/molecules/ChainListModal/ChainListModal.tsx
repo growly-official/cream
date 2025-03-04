@@ -4,9 +4,9 @@ import { EcosystemRegistry, Ecosystems } from 'chainsmith-sdk/src';
 import { CircleCheck } from 'lucide-react';
 import { Atoms } from '../..';
 import ChainList from '../ChainList/ChainList';
-import { TMultichain, TChainEcosystem, TChainName } from 'chainsmith-sdk/src/types';
+import { TMultichain, TChainEcosystem, TChainName } from 'chainsmith-sdk/types';
 import clsx from 'clsx';
-import { countExistentialObject, filterObject } from 'chainsmith-sdk/src/utils';
+import { countExistentialObject, filterObject } from 'chainsmith-sdk/utils';
 import { LocalEcosystemRegistry, mustBeBoolean } from '@/core';
 
 type Props = {

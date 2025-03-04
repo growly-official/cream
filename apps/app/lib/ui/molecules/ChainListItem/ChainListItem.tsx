@@ -1,4 +1,4 @@
-import { TChain } from 'chainsmith-sdk/src/types';
+import { TChain } from 'chainsmith-sdk/types';
 import clsx from 'clsx';
 import ChainIcon from '../ChainIcon/ChainIcon';
 

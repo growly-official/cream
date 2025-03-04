@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import ChainListItem from './ChainListItem';
-import { EvmChainList } from 'chainsmith-sdk/src/data';
-import { ChainTypeBuilder } from 'chainsmith-sdk/src/wrapper';
+import { EvmChainList } from 'chainsmith-sdk/data';
+import { ChainTypeBuilder } from 'chainsmith-sdk/wrapper';
 
 const meta: Meta<typeof ChainListItem> = {
   component: ChainListItem,

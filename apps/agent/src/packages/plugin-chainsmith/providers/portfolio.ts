@@ -9,8 +9,8 @@ import {
 import NodeCache from 'node-cache';
 import * as path from 'node:path';
 
-import { ChainsmithSdk } from 'chainsmith-sdk/src/index.ts';
-import { alchemy } from 'chainsmith-sdk/src/rpc/index.ts';
+import { ChainsmithSdk } from 'chainsmith-sdk/index.ts';
+import { alchemy } from 'chainsmith-sdk/rpc/index.ts';
 import {
   TAddress,
   TChain,
@@ -19,15 +19,15 @@ import {
   TMarketTokenList,
   TMultichain,
   TTokenChainData,
-} from 'chainsmith-sdk/src/types/index.ts';
+} from 'chainsmith-sdk/types/index.ts';
 import {
   aggregateMultichainTokenBalance,
   buildEvmChains,
   formatNumberSI,
   formatNumberUSD,
   getChainByName,
-} from 'chainsmith-sdk/src/utils/index.ts';
-import { createClient } from 'chainsmith-sdk/src/wrapper.ts';
+} from 'chainsmith-sdk/utils/index.ts';
+import { createClient } from 'chainsmith-sdk/wrapper.ts';
 import { AdapterRegistry } from '../config/chainsmith.ts';
 
 export class PortfolioProvider {
@@ -73,7 +73,7 @@ export class PortfolioProvider {
     }
 
     try {
-      const tokenList = await this.sdk.portfolio.getMultichainTokenList([
+      const tokenList = await this.sdk.portfolio.getMultichainMarketTokenList([
         AdapterRegistry.CoinMarketcap,
         AdapterRegistry.Alchemy,
       ])(this.address);

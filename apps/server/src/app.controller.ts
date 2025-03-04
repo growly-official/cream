@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service.ts';
 import type {
+  TTokenPortfolio,
+  TTokenTransferActivity,
   TAddress,
   TChainMetadataListResponse,
   TChainName,
   TMultichain,
-} from 'chainsmith-sdk/src/types/chains.d.ts';
-import type { TTokenPortfolio } from 'chainsmith-sdk/src/types/stats.d.ts';
-import { TTokenTransferActivity } from 'chainsmith-sdk/src/types/tokens';
+} from 'chainsmith-sdk/types/index.ts';
 
 @Controller()
 export class AppController {

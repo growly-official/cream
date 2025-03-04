@@ -1,4 +1,4 @@
-import { IEcosystemChainRegistry, TChainName } from 'chainsmith-sdk/src/types';
+import { IEcosystemChainRegistry, TChainName } from 'chainsmith-sdk/types';
 
 export const BackgroundChains: TChainName[] = ['mainnet', 'base', 'optimism', 'arbitrum'];
 

@@ -17,6 +17,7 @@
     "clean": "rm -fR ./node_modules"
   },
   "dependencies": {
+    "chainsmith-sdk": "git+https://github.com/growly-official/chainsmith-sdk#e083b441df7ff371253d8c877158bb444c6e08d0",
     "@bigmi/react": "^0.1.1",
     "@elizaos/core": "^0.25.6-alpha.1",
     "@lifi/widget": "^3.16.1",

@@ -25,5 +25,5 @@
     "moduleDetection": "force",
     "allowArbitraryExtensions": true
   },
-  "include": ["**/*.ts", "**/*.json"]
+  "include": ["**/*.ts"]
 }

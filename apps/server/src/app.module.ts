@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller.ts';
-import { AppService } from './app.service.ts';
+import { EvmModule } from './modules/evm/evm.module';
+import { SonicModule } from './modules/sonic/sonic.module';
+import { SonicApiService } from './modules/sonic/sonic.service';
+import { EvmChainService } from './modules/evm/evm.service';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [EvmModule, SonicModule],
+  providers: [EvmChainService, SonicApiService],
 })
 export class AppModule {}

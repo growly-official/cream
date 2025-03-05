@@ -14,8 +14,6 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Set the working directory
 WORKDIR /app
-# Copy core
-COPY ./packages/core/ ./packages/core
 
 # Copy agent
 COPY ./apps/agent/package.json ./apps/agent/package.json
@@ -59,6 +57,5 @@ COPY --from=builder /app/tsconfig.base.json /app/
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/apps/agent/ /app/apps/agent/
 COPY --from=builder /app/apps/server/ /app/apps/server/
-COPY --from=builder /app/packages/core/ /app/packages/core/
 
 EXPOSE 3000 3005

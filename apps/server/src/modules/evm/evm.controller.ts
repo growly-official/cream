@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { AppService } from './app.service.ts';
 import type {
   TTokenPortfolio,
   TTokenTransferActivity,
@@ -8,17 +7,18 @@ import type {
   TChainName,
   TMultichain,
 } from 'chainsmith-sdk/types/index.ts';
+import { EvmChainService } from './evm.service';
 
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+@Controller('/evm')
+export class EvmChainController {
+  constructor(private readonly evmService: EvmChainService) {}
 
   @Post('/portfolio')
   async getWalletTokenPortfolio(
     @Body() payload: { walletAddress: TAddress; chainNames: TChainName[] }
   ): Promise<TTokenPortfolio> {
     if (payload.chainNames.length === 0) throw new Error('No chain provided');
-    return this.appService.getWalletTokenPortfolio(payload.walletAddress, payload.chainNames);
+    return this.evmService.getEvmChainsTokenPortfolio(payload.walletAddress, payload.chainNames);
   }
 
   @Post('/activity')
@@ -26,7 +26,7 @@ export class AppController {
     @Body() payload: { walletAddress: TAddress; chainNames: TChainName[] }
   ): Promise<TMultichain<TTokenTransferActivity[]>> {
     if (payload.chainNames.length === 0) throw new Error('No chain provided');
-    return this.appService.listMultichainTokenTransferActivities(
+    return this.evmService.listMultichainTokenTransferActivities(
       payload.walletAddress,
       payload.chainNames
     );
@@ -36,6 +36,6 @@ export class AppController {
   async getChainMetadata(
     @Param() params: { id: number }
   ): Promise<TChainMetadataListResponse | undefined> {
-    return this.appService.getChainMetadata(params.id);
+    return this.evmService.getChainMetadata(params.id);
   }
 }

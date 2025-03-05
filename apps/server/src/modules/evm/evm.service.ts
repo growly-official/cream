@@ -7,11 +7,11 @@ import {
   TTokenPortfolio,
   TTokenTransferActivity,
 } from 'chainsmith-sdk/types/index.ts';
-import { AdapterRegistry, initChainsmithSdk } from './config/index.ts';
+import { AdapterRegistry, initChainsmithSdk } from '../../config/index.ts';
 
 @Injectable()
-export class AppService {
-  async getWalletTokenPortfolio(
+export class EvmChainService {
+  async getEvmChainsTokenPortfolio(
     walletAddress: TAddress,
     chainNames: TChainName[]
   ): Promise<TTokenPortfolio> {

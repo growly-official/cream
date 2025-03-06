@@ -21,7 +21,7 @@
     "@tavily/core": "^0.3.1",
     "amqplib": "0.10.5",
     "better-sqlite3": "^11.8.1",
-    "chainsmith-sdk": "git+https://github.com/growly-official/chainsmith-sdk#e083b441df7ff371253d8c877158bb444c6e08d0",
+    "chainsmith-sdk": "git+https://github.com/growly-official/chainsmith-sdk#3c8a081447e3cd1c13741841e7512acb4c2e635b",
     "fs": "0.0.1-security",
     "net": "1.0.2",
     "path": "0.12.7",

@@ -1,1 +1,1 @@
-export * from './chainsmith.ts';
+export * from './chainsmith';

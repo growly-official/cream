@@ -5,9 +5,9 @@ import {
   TMultichain,
   TTokenPortfolio,
   TTokenTransferActivity,
-} from 'chainsmith-sdk/types/index.ts';
-import { AdapterRegistry, initChainsmithSdk } from '../../config/index.ts';
-import { multiple } from 'chainsmith-sdk/adapters/index.ts';
+} from 'chainsmith-sdk/types';
+import { AdapterRegistry, initChainsmithSdk } from '../config';
+import { multiple } from 'chainsmith-sdk/adapters';
 
 @Injectable()
 export class SonicApiService {

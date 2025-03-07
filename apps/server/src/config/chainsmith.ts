@@ -1,38 +1,53 @@
-import { rpc, adapters, ChainsmithSdk } from 'chainsmith-sdk/index';
-import { EvmTokenPlugin } from 'chainsmith-sdk/plugins/evm/index.ts';
-import { alchemy } from 'chainsmith-sdk/rpc/index.ts';
-import { TChainName } from 'chainsmith-sdk/types/index.ts';
-import { buildEvmChains } from 'chainsmith-sdk/utils/index.ts';
+import { ChainsmithSdk, TChain, TChainName, initChainsmithSdk } from 'chainsmith-sdk';
+import {
+  AlchemyAdapter,
+  UniswapSdkAdapter,
+  EvmscanAdapter,
+  DexScreenerAdapter,
+  CoinMarketcapAdapter,
+  OriginApiAdapter,
+  ReservoirAdapter,
+  BeetsApiAdapter,
+  SiloV2ApiAdapter,
+  MetropolisApiAdapter,
+  PaintSwapAdapter,
+  ShadowExchangeAdapter,
+  ShadowExchangeApiAdapter,
+} from 'chainsmith-sdk/adapters';
+import { EvmTokenPlugin } from 'chainsmith-sdk/plugins';
+import { alchemy } from 'chainsmith-sdk/rpc';
+import { buildEvmChains } from 'chainsmith-sdk/utils';
 
-export const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || '';
-
-export const SIMPLE_HASH_API_BASE_URL = process.env.SIMPLE_HASH_API_BASE_URL;
-export const SIMPLE_HASH_API_KEY = process.env.SIMPLE_HASH_API_KEY;
-
-export const COINMARKETCAP_API_BASE_URL = 'https://pro-api.coinmarketcap.com';
-export const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || '';
-
-export const ETHERSCAN_BASE_URL = 'https://api.etherscan.io/v2/api';
-export const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || '';
+const COINMARKETCAP_API_BASE_URL = 'https://pro-api.coinmarketcap.com';
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || '';
+const ETHERSCAN_BASE_URL = 'https://api.etherscan.io/v2/api';
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY || '';
 
 export const AdapterRegistry = {
-  Alchemy: new adapters.AlchemyAdapter(ALCHEMY_API_KEY, new EvmTokenPlugin()),
-  CoinMarketcap: new adapters.CoinMarketcapAdapter(
-    COINMARKETCAP_API_BASE_URL,
-    COINMARKETCAP_API_KEY
-  ),
-  Uniswap: new adapters.UniswapSdkAdapter(rpc.alchemy(ALCHEMY_API_KEY)),
-  Evmscan: new adapters.EvmscanAdapter(ETHERSCAN_BASE_URL, ETHERSCAN_API_KEY),
-  DexScreener: new adapters.DexScreenerAdapter(),
+  Alchemy: new AlchemyAdapter(ALCHEMY_API_KEY, new EvmTokenPlugin()),
+  BeetsApi: new BeetsApiAdapter(),
+  CoinMarketcap: new CoinMarketcapAdapter(COINMARKETCAP_API_BASE_URL, COINMARKETCAP_API_KEY),
+  DexScreener: new DexScreenerAdapter(),
+  Evmscan: new EvmscanAdapter(ETHERSCAN_BASE_URL, ETHERSCAN_API_KEY),
+  MetropolisApi: new MetropolisApiAdapter(),
+  OriginApi: new OriginApiAdapter(),
+  PaintSwap: new PaintSwapAdapter(),
+  Reservoir: new ReservoirAdapter(RESERVOIR_API_KEY),
+  ShadowExchangeApi: new ShadowExchangeApiAdapter(),
+  ShadowExchange: new ShadowExchangeAdapter(new EvmTokenPlugin()),
+  SiloV2Api: new SiloV2ApiAdapter(),
+  Uniswap: new UniswapSdkAdapter(alchemy(ALCHEMY_API_KEY)),
 };
 
-export const buildDefaultChains = (chainNames: TChainName[]) =>
+export const buildDefaultChains = (chainNames: TChainName[]): TChain[] =>
   buildEvmChains(chainNames, alchemy(ALCHEMY_API_KEY));
 
-export const initChainsmithSdk = (chainNames: TChainName[] = []) => {
+export const chainsmithSdk = (chainNames: TChainName[] = []): ChainsmithSdk => {
   let chains = [];
   if (chainNames.length > 0) {
     chains = buildDefaultChains(chainNames);
   }
-  return ChainsmithSdk.init(chains);
+  return initChainsmithSdk(chains);
 };

@@ -24,7 +24,7 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
-    "chainsmith-sdk": "git+https://github.com/growly-official/chainsmith-sdk#ac86f56b692a09bb623ce7387b5a187426162b79",
+    "chainsmith-sdk": "^1.0.2-alpha.4",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },

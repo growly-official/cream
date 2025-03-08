@@ -11,8 +11,8 @@ import SwapButton from './SwapButton/SwapButton';
 import AnalyzeTokenModal from './AnalyzeTokenModal/AnalyzeTokenModal';
 import AnalyzeTokenButton from './AnalyzeTokenButton/AnlyzeTokenButton';
 import AiChatModal from './AiChatModal/AiChatModal';
-import StakeKitWidgetModal from './StakeKitWidgetModal/StakeKitWidgetModal';
-import StakeKitWidgetButton from './StakeKitWidgetButton/StakeKitWidgetButton';
+import YieldFarmingModal from './YieldFarmingModal/YieldFarmingModal';
+import YieldFarmingButton from './YieldFarmingButton/YieldFarmingButton';
 import InvestmentObjectiveModal from './InvestmentObjectiveModal/InvestmentObjectiveModal';
 
 export {
@@ -27,8 +27,8 @@ export {
   TokenRiskBadge,
   SwapWidgetModal,
   SwapButton,
-  StakeKitWidgetModal,
-  StakeKitWidgetButton,
+  YieldFarmingModal,
+  YieldFarmingButton,
   InvestmentObjectiveModal,
   AnalyzeTokenModal,
   AnalyzeTokenButton,

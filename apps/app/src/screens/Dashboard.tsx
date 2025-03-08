@@ -90,9 +90,9 @@ const Dashboard: React.FC<any> = () => {
                 </div>
               </div>
               <div className="flex gap-3">
-                <Molecules.StakeKitWidgetButton tooltipContent="Maximize profits with yield farming (Coming soon with StakeKit)">
+                <Molecules.YieldFarmingButton tooltipContent="Maximize profits with yield farming">
                   👩‍🌾 Yield Farming
-                </Molecules.StakeKitWidgetButton>
+                </Molecules.YieldFarmingButton>
                 <Molecules.SwapButton
                   type="SWAP"
                   tooltipContent="Cross-chain swapping tokens"

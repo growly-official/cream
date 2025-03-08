@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Button, TooltipContainer } from '../../atoms';
-import { StakeKitWidgetModal } from '..';
+import { YieldFarmingModal } from '..';
 import { ButtonProps } from '@radix-ui/themes';
 
-const StakeKitWidgetButton = ({
+const YieldFarmingButton = ({
   children,
   tooltipContent,
   buttonProps,
@@ -14,13 +14,13 @@ const StakeKitWidgetButton = ({
 }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   return (
-    <TooltipContainer tooltipId={`stakekit`} tooltipContent={tooltipContent}>
+    <TooltipContainer tooltipId={`yield-farming`} tooltipContent={tooltipContent}>
       <Button {...buttonProps} onClick={() => setOpenModal(true)} size={'2'} color="yellow">
         {children}
       </Button>
-      <StakeKitWidgetModal open={openModal} handleOpen={open => setOpenModal(open)} />
+      <YieldFarmingModal open={openModal} handleOpen={open => setOpenModal(open)} />
     </TooltipContainer>
   );
 };
 
-export default StakeKitWidgetButton;
+export default YieldFarmingButton;

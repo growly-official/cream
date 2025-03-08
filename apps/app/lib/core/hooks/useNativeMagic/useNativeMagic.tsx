@@ -1,26 +1,20 @@
 import { calculateGasInETH, calculateMultichainTokenPortfolio } from 'chainsmith-sdk/utils';
 import { toast } from 'react-toastify';
-import { delayMs, selectState, setState } from '../utils';
+import { delayMs, setState } from '../../utils';
 import {
   BinaryState,
   StateEvent,
   StateOption,
   ThreeStageState,
   Toastable,
-} from '../types/state.type';
-import { useMagicContext } from './useMagicContext';
-import {
-  TActivityStats,
-  TAddress,
-  TChainName,
-  TChainStats,
-  TMultichain,
-} from 'chainsmith-sdk/types';
+} from '../../types/state.type';
+import { useNativeMagicContext } from './useNativeMagicContext';
+import { TActivityStats, TAddress, TChainStats } from 'chainsmith-sdk/types';
 import { calculateEVMStreaksAndMetrics } from 'chainsmith-sdk/adapters';
-import { ChainsmithApiService } from '../services';
-import { buildCachePayload, getRevalidatedJsonData } from '../helpers';
+import { SonicChainApiService } from '../../services';
+import { buildCachePayload, getRevalidatedJsonData } from '../../helpers';
 
-export const StateSubEvents = {
+export const NativeStateSubEvents = {
   [StateEvent.ActivityStats]: ThreeStageState,
   [StateEvent.GetAddress]: BinaryState,
   [StateEvent.GetTokenPortfolio]: ThreeStageState,
@@ -30,12 +24,13 @@ export const StateSubEvents = {
   [StateEvent.GetTalentScore]: BinaryState,
 };
 
-export const useMagic = () => {
-  const magicContext = useMagicContext();
+const service = new SonicChainApiService();
+
+export const useNativeMagic = () => {
+  const magicContext = useNativeMagicContext();
   const {
     stateEvents,
     setStateEvents,
-    selectedNetworks,
     // Raw
     allTransactions,
     tokenPortfolio,
@@ -52,7 +47,7 @@ export const useMagic = () => {
   };
 
   const stateCheck = (event: keyof typeof StateEvent, option: StateOption): boolean => {
-    return stateEvents[event] === (StateSubEvents[event] as any)[option];
+    return stateEvents[event] === (NativeStateSubEvents[event] as any)[option];
   };
 
   async function newAsyncDispatch<Output>(
@@ -93,24 +88,19 @@ export const useMagic = () => {
     return newAsyncDispatch(
       StateEvent.ActivityStats,
       {
-        onStartEvent: StateSubEvents.ActivityStats.InProgress,
-        onErrorEvent: { value: StateSubEvents.ActivityStats.Idle },
+        onStartEvent: NativeStateSubEvents.ActivityStats.InProgress,
+        onErrorEvent: { value: NativeStateSubEvents.ActivityStats.Idle },
         onFinishEvent: {
-          value: StateSubEvents.ActivityStats.Finished,
+          value: NativeStateSubEvents.ActivityStats.Finished,
           toast: 'Activity stats fetched.',
         },
-        onResetEvent: StateSubEvents.ActivityStats.Idle,
+        onResetEvent: NativeStateSubEvents.ActivityStats.Idle,
       },
       async () => {
-        const multichainTxs =
-          await new ChainsmithApiService().listMultichainTokenTransferActivities(
-            addressInput,
-            selectState(selectedNetworks)['evm'] || []
-          );
-        setState(allTransactions)(multichainTxs);
+        const txs = await service.listTokenTransferActivities(addressInput);
+        setState(allTransactions)(txs);
 
-        const totalChains: TChainName[] = Object.keys(multichainTxs) as TChainName[];
-        const filteredTransactions = Object.values(multichainTxs)
+        const filteredTransactions = Object.values(txs)
           .flat()
           .filter(tx => tx.from.toLowerCase() === addressInput.toLowerCase());
         const _totalGasInETH = filteredTransactions.reduce(
@@ -119,42 +109,24 @@ export const useMagic = () => {
           0
         );
 
-        // console.log("_totalGasInETH:", _totalGasInETH);
         setState(totalGasInETH)(_totalGasInETH);
 
-        let mostActiveChainName: TChainName = totalChains.reduce((a, b) =>
-          (multichainTxs[a]?.length || 0) > (multichainTxs[b]?.length || 0) ? a : b
-        );
-
-        // Default chain should be 'Base'
-        if (multichainTxs[mostActiveChainName]?.length === 0) mostActiveChainName = 'base';
-
-        const _countActiveChainTxs = multichainTxs[mostActiveChainName]?.length || 0;
+        const _countActiveChainTxs = txs?.length || 0;
 
         // Get Activity Stats
-        const stats: TMultichain<TActivityStats> = {};
-        for (const chain of totalChains) {
-          const chainTxs = multichainTxs[chain];
-          if (chainTxs?.length || 0 > 0) {
-            stats[chain] = calculateEVMStreaksAndMetrics(chainTxs || [], addressInput);
-          }
+        let stats: TActivityStats | undefined = undefined;
+        if (txs?.length || 0 > 0) {
+          stats = calculateEVMStreaksAndMetrics(txs || [], addressInput);
+          setState(activityStats)(stats);
         }
-        setState(activityStats)(stats);
 
-        // Get chain stats
-        const noActivityChains = totalChains.filter(
-          chain => multichainTxs[chain]?.length || 0 === 0
-        );
         // Get unique active day, on most active chain 🫠
-        const { uniqueActiveDays } = calculateEVMStreaksAndMetrics(
-          multichainTxs[mostActiveChainName] || [],
-          addressInput
-        );
+        const { uniqueActiveDays } = calculateEVMStreaksAndMetrics(txs || [], addressInput);
 
         const _chainStats: TChainStats = {
-          totalChains,
-          mostActiveChainName,
-          noActivityChains,
+          totalChains: [],
+          mostActiveChainName: 'sonic',
+          noActivityChains: [],
           countUniqueDaysActiveChain: uniqueActiveDays,
           countActiveChainTxs: _countActiveChainTxs,
         };
@@ -165,29 +137,26 @@ export const useMagic = () => {
     );
   };
 
-  const fetchMultichainTokenPortfolio = async (addressInput: TAddress) => {
+  const fetchTokenPortfolio = async (addressInput: TAddress) => {
     return newAsyncDispatch(
       StateEvent.GetTokenPortfolio,
       {
-        onStartEvent: StateSubEvents.GetTokenPortfolio.InProgress,
+        onStartEvent: NativeStateSubEvents.GetTokenPortfolio.InProgress,
         onErrorEvent: {
-          value: StateSubEvents.GetTokenPortfolio.Idle,
+          value: NativeStateSubEvents.GetTokenPortfolio.Idle,
           toast: 'Failed to fetch multichain token portfolio.',
         },
         onFinishEvent: {
-          value: StateSubEvents.GetTokenPortfolio.Finished,
+          value: NativeStateSubEvents.GetTokenPortfolio.Finished,
           toast: 'Fetched token portfolio.',
         },
-        onResetEvent: StateSubEvents.GetTokenPortfolio.Idle,
+        onResetEvent: NativeStateSubEvents.GetTokenPortfolio.Idle,
       },
       async () => {
         const cachedTokenPortfolio = await getRevalidatedJsonData(
           `${addressInput}.tokenPortfolio`,
           async () => {
-            const tokenPortfolio = await new ChainsmithApiService().getWalletTokenPortfolio(
-              addressInput,
-              selectState(selectedNetworks)['evm'] || []
-            );
+            const tokenPortfolio = await service.getWalletTokenPortfolio(addressInput);
             return buildCachePayload(tokenPortfolio, 1000 * 60 * 60 * 5);
           }
         );
@@ -202,9 +171,8 @@ export const useMagic = () => {
 
   const letsDoSomeMagic = async (addressInput: TAddress | undefined) => {
     try {
-      const networks = Object.values(selectState(selectedNetworks)).flat();
-      if (networks.length > 0 && addressInput) {
-        await fetchMultichainTokenPortfolio(addressInput);
+      if (addressInput) {
+        await fetchTokenPortfolio(addressInput);
         await fetchActivityStats(addressInput);
         await delayMs(1000);
       }
@@ -216,7 +184,7 @@ export const useMagic = () => {
   return {
     query: {
       fetchActivityStats,
-      fetchMultichainTokenPortfolio,
+      fetchTokenPortfolio,
       stateCheck,
     },
     mutate: {

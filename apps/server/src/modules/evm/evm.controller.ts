@@ -6,7 +6,7 @@ import type {
   TTokenTransferActivity,
   TMultichain,
   TTokenPortfolio,
-} from 'chainsmith-sdk';
+} from 'chainsmith-sdk/types';
 
 @Controller('/evm')
 export class EvmController {

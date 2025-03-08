@@ -2,24 +2,27 @@ import { Injectable } from '@nestjs/common';
 import { AdapterRegistry, chainsmithSdk } from '../../config';
 import type {
   TAddress,
+  TChain,
   TChainName,
   TNftBalance,
   TTokenPortfolio,
   TTokenTransferActivity,
-} from 'chainsmith-sdk';
+} from 'chainsmith-sdk/types';
 import type { TSonicUserPointsStats } from 'chainsmith-sdk/plugins';
+import { getChainByName } from 'chainsmith-sdk/utils';
+import { ChainsmithSdk } from 'chainsmith-sdk';
 
 @Injectable()
 export class SonicService {
   CHAIN_NAME: TChainName = 'sonic';
-
-  sdk = chainsmithSdk([this.CHAIN_NAME]);
+  sdk: ChainsmithSdk = chainsmithSdk([this.CHAIN_NAME]);
+  chain: TChain = getChainByName(this.CHAIN_NAME);
 
   async getTokenPortfolio(walletAddress: TAddress): Promise<TTokenPortfolio> {
     return this.sdk.portfolio.getTokenPortfolio([
       AdapterRegistry.ShadowExchangeApi,
       AdapterRegistry.ShadowExchange,
-    ])(walletAddress);
+    ])(walletAddress, this.chain);
   }
 
   async getUserPointStats(walletAddress: TAddress): Promise<TSonicUserPointsStats> {
@@ -34,6 +37,9 @@ export class SonicService {
   }
 
   async listTokenTransferActivities(walletAddress: TAddress): Promise<TTokenTransferActivity[]> {
-    return this.sdk.token.listChainTokenTransferActivities(AdapterRegistry.Evmscan)(walletAddress);
+    return this.sdk.token.listChainTokenTransferActivities(AdapterRegistry.Evmscan)(
+      walletAddress,
+      this.chain
+    );
   }
 }

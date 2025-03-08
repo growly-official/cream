@@ -4,7 +4,7 @@ import {
   TChainId,
   TTokenTransferActivity,
   TChainMetadataListResponse,
-} from 'chainsmith-sdk';
+} from 'chainsmith-sdk/types';
 import { chainsmithSdk } from '../../config/index.ts';
 
 @Injectable()

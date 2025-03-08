@@ -9,7 +9,7 @@ import { makeid } from '@/core';
 type Props = {
   type: 'TRANSFER' | 'SWAP';
   token?: TMarketToken;
-  supportedChains: TChainId[];
+  supportedChains?: TChainId[];
   tooltipContent: string;
   children: React.ReactNode;
   toAddress?: ToAddress;

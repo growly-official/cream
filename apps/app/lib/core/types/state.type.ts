@@ -1,3 +1,5 @@
+import React from 'react';
+
 export enum StateEvent {
   GetAddress = 'GetAddress',
   ActivityStats = 'ActivityStats',
@@ -27,3 +29,6 @@ export interface Toastable<T> {
   toast?: string;
   value: T;
 }
+
+export type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
+export type UseState<T> = [T, SetState<T>];

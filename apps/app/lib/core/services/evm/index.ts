@@ -7,16 +7,15 @@ import {
   TTokenPortfolio,
   TTokenTransferActivity,
 } from 'chainsmith-sdk/types';
+import { BACKEND_SERVER_URL } from '../../config';
 
-const BACKEND_SERVER_URL = `http://localhost:${import.meta.env.VITE_SERVER_PORT}`;
-
-export class ChainsmithApiService {
+export class EvmApiService {
   async getWalletTokenPortfolio(
     walletAddress: TAddress,
     chainNames: TChainName[]
   ): Promise<TTokenPortfolio> {
     try {
-      const response = await axios.post<TTokenPortfolio>(`${BACKEND_SERVER_URL}/portfolio`, {
+      const response = await axios.post<TTokenPortfolio>(`${BACKEND_SERVER_URL}/evm/portfolio`, {
         walletAddress,
         chainNames,
       });
@@ -32,7 +31,7 @@ export class ChainsmithApiService {
   ): Promise<TMultichain<TTokenTransferActivity[]>> {
     try {
       const response = await axios.post<TMultichain<TTokenTransferActivity[]>>(
-        `${BACKEND_SERVER_URL}/activity`,
+        `${BACKEND_SERVER_URL}/evm/activity`,
         {
           walletAddress,
           chainNames,

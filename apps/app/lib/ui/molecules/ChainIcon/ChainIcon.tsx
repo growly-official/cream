@@ -1,4 +1,4 @@
-import { ChainsmithApiService } from '@/core';
+import { EvmApiService } from '@/core';
 import { TChainMetadataListResponse, TChainName } from 'chainsmith-sdk/types';
 import { getChainByName } from 'chainsmith-sdk/utils';
 import { useState, useEffect } from 'react';
@@ -10,7 +10,7 @@ const ChainIcon = ({ chainName, size }: { chainName: TChainName; size?: number }
   useEffect(() => {
     const fetchChainMetadata = async () => {
       try {
-        const _metadata = await new ChainsmithApiService().getChainMetadataById(
+        const _metadata = await new EvmApiService().getChainMetadataById(
           getChainByName(chainName).id
         );
         setMetadata(_metadata);

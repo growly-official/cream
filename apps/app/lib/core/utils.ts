@@ -1,10 +1,10 @@
-import { UseState } from './contexts';
+import { UseState } from '.';
 
 export const mustBeBoolean = (v: any) => !!v;
 
 export const delayMs = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
-export function selectState<T>(s: UseState<T>) {
+export function selectState<T>(s: UseState<T>): T {
   return s[0];
 }
 

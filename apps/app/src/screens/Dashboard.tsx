@@ -2,9 +2,10 @@ import {
   formatNumberUSD,
   selectState,
   setState,
-  useMagicContext,
-  useMagic,
+  useNativeMagicContext,
+  useMultichainMagic,
   getJsonCacheData,
+  useMultichainMagicContext,
 } from '@/core';
 import { Atoms, Molecules } from '@/ui';
 import { ThreeStageState } from '@/core';
@@ -12,16 +13,19 @@ import React, { useState } from 'react';
 import animationData from '../assets/animation/pink-loading.json';
 import Lottie from 'react-lottie';
 import Countup from 'react-countup';
-import { ConnectWalletWithPrivyButton } from '../components';
 import { TextField } from '@radix-ui/themes';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { ArrowRightLeftIcon } from 'lucide-react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi';
 
 const Dashboard: React.FC<any> = () => {
   const {
     query: { stateCheck },
-  } = useMagic();
-  const { tokenPortfolio, selectedNetworks } = useMagicContext();
+  } = useMultichainMagic();
+  const { address } = useAccount();
+  const { selectedNetworks } = useMultichainMagicContext();
+  const { tokenPortfolio } = useNativeMagicContext();
   const [chatWithAiMessage, setChatWithAiMessage] = useState('');
   const [openObjectiveModal, setOpenObjectiveModal] = useState(
     !getJsonCacheData('investmentObjectives')
@@ -32,7 +36,7 @@ const Dashboard: React.FC<any> = () => {
       <div className="py-5 px-7 rounded-xl flex flex-col shadow-xl w-full h-[100vh] bg-white">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <ConnectWalletWithPrivyButton />
+            <ConnectButton />
           </div>
           <Molecules.SelectNetworkButton
             selectedNetworks={selectState(selectedNetworks)}
@@ -93,17 +97,21 @@ const Dashboard: React.FC<any> = () => {
                 <Molecules.YieldFarmingButton tooltipContent="Maximize profits with yield farming">
                   👩‍🌾 Yield Farming
                 </Molecules.YieldFarmingButton>
-                <Molecules.SwapButton
-                  type="SWAP"
-                  tooltipContent="Cross-chain swapping tokens"
-                  supportedChains={Object.keys(selectedNetworks) as any}>
+                <Molecules.SwapButton type="SWAP" tooltipContent="Cross-chain swapping tokens">
                   <ArrowRightLeftIcon size={10} /> Rebalance Portfolio
                 </Molecules.SwapButton>
               </div>
               <div className="mt-10 overflow-scroll max-h-[700px] pb-[15rem]">
-                {Object.keys(selectState(tokenPortfolio).chainRecordsWithTokens).length > 0 ? (
-                  <Molecules.TokenPortfolioTable
-                    multichainTokenData={selectState(tokenPortfolio).chainRecordsWithTokens}
+                {address &&
+                Object.keys(selectState(tokenPortfolio).chainRecordsWithTokens).length > 0 ? (
+                  <Molecules.NativeTokenPortfolioTable
+                    address={address}
+                    tokenData={
+                      selectState(tokenPortfolio).chainRecordsWithTokens['sonic'] || {
+                        totalUsdValue: 0,
+                        tokens: [],
+                      }
+                    }
                   />
                 ) : (
                   <Atoms.Empty

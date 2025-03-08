@@ -5,7 +5,7 @@ import {
   TMultichain,
   TTokenPortfolio,
   TTokenTransferActivity,
-} from 'chainsmith-sdk';
+} from 'chainsmith-sdk/types';
 import { AdapterRegistry, chainsmithSdk } from '../../config';
 
 @Injectable()

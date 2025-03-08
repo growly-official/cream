@@ -5,7 +5,7 @@ import { TChainId, TMarketToken } from 'chainsmith-sdk/types';
 type Props = {
   type: 'TRANSFER' | 'SWAP';
   token?: TMarketToken;
-  supportedChains: TChainId[];
+  supportedChains?: TChainId[];
   open: boolean;
   toAddress?: ToAddress;
   handleOpen: (open: boolean) => void;
@@ -39,10 +39,14 @@ const SwapWidgetModal = ({ type, open, handleOpen, token, toAddress, supportedCh
               }
             : {}),
           toAddress,
-          chains: {
-            from: { allow: supportedChains },
-            to: { allow: supportedChains },
-          },
+          ...(supportedChains
+            ? {
+                chains: {
+                  from: { allow: supportedChains },
+                  to: { allow: supportedChains },
+                },
+              }
+            : {}),
         }}
       />
     </Modal>

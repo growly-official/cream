@@ -1,7 +1,8 @@
 import 'reflect-metadata';
-import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
+import '@rainbow-me/rainbowkit/styles.css';
 
+import { Theme } from '@radix-ui/themes';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import Providers from './Providers';
 import { GettingStarted, Chat } from './screens';

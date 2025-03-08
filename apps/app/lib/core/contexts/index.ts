@@ -1,1 +1,2 @@
-export * from './MagicContext';
+export * from './MultichainMagicContext';
+export * from './NativeMagicContext';

@@ -1,2 +1,3 @@
 export * from './AnimatedBackground';
-export * from './ConnectWalletWithPrivyButton';
+export * from './ConnectPortfolioWallet';
+export * from './CustomRainbowAvatar';

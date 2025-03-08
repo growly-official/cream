@@ -1,6 +1,6 @@
-import { formatNumberUSD, selectState, useMagicContext } from '@/core';
+import { formatNumberUSD } from '@/core';
 import { Table } from '@radix-ui/themes';
-import { TMultichain, TMarketTokenList, TChainName } from 'chainsmith-sdk/types';
+import { TMultichain, TMarketTokenList, TChainName, TAddress } from 'chainsmith-sdk/types';
 import React from 'react';
 import ChainIcon from '../ChainIcon/ChainIcon';
 import TokenRisktBadge from '../TokenRiskBadge/TokenRisktBadge';
@@ -12,11 +12,11 @@ import AnalyzeTokenButton from '../AnalyzeTokenButton/AnlyzeTokenButton';
 import { ChainType } from '@lifi/widget';
 
 type Props = {
+  address: TAddress;
   multichainTokenData: TMultichain<TMarketTokenList>;
 };
 
-const TokenPortfolioTable = ({ multichainTokenData }: Props) => {
-  const { agentWallet, userWallet } = useMagicContext();
+const MultichainTokenPortfolioTable = ({ address, multichainTokenData }: Props) => {
   return (
     <React.Fragment>
       {Object.entries(multichainTokenData).map(([chainName, { tokens, totalUsdValue }]) => (
@@ -85,14 +85,14 @@ const TokenPortfolioTable = ({ multichainTokenData }: Props) => {
                           reviewFrequency={'DAILY'}
                           riskLevel={'AGGRESSIVE'}
                           investmentObjective={'GROWTH'}
-                          walletAddress={selectState(userWallet)?.address}>
+                          walletAddress={address}>
                           <ScanSearchIcon size={10} />
                         </AnalyzeTokenButton>
                         <SwapButton
                           type="TRANSFER"
                           token={token}
                           toAddress={{
-                            address: selectState(agentWallet)?.address || '',
+                            address: address || '',
                             chainType: ChainType.EVM,
                           }}
                           buttonProps={{
@@ -116,4 +116,4 @@ const TokenPortfolioTable = ({ multichainTokenData }: Props) => {
   );
 };
 
-export default TokenPortfolioTable;
+export default MultichainTokenPortfolioTable;

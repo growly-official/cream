@@ -43,7 +43,7 @@ export function isCacheExpires(cachePayload: CachePayload<any>) {
 }
 
 export function isValidStorageKey(key: string) {
-  let cachedData = getJsonCacheData(key);
+  const cachedData = getJsonCacheData(key);
   return !!cachedData && !isCacheExpires(cachedData);
 }
 

@@ -1,38 +1,33 @@
 import 'reflect-metadata';
 import '@radix-ui/themes/styles.css';
 import '@rainbow-me/rainbowkit/styles.css';
+import './index.css';
 
 import { Theme } from '@radix-ui/themes';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import Providers from './Providers';
 import { GettingStarted, Chat } from './screens';
 import { AnimatedBackground } from './components/AnimatedBackground';
-import './index.css';
+import FetchingStatusOverlay from './components/FetchingStatusOverlay';
+import { AppBar } from './components/AppBar';
 
 function App() {
   return (
     <Providers>
       <Theme grayColor="gray" radius="large">
-        <main className={`w-full py-5 px-3 max-h-[100vh] overflow-hidden`}>
+        <main className={`w-full max-h-[100vh] overflow-hidden`}>
+          <FetchingStatusOverlay />
           <AnimatedBackground />
-          <div className="flex justify-between w-full items-center px-10">
-            <div className="mb-3 flex items-center gap-4">
-              <img src="/logo.png" width={30} className="rounded-[5px]" />
-              <h2 className="text-lg font-bold">Cream</h2>
+          <div className="px-3 py-5">
+            <AppBar />
+            <div className="h-full relative flex flex-col items-center">
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<GettingStarted />} />
+                  <Route path="chat/:agentId" element={<Chat />} />
+                </Routes>
+              </BrowserRouter>
             </div>
-            <a
-              className="font-bold hover:text-orange-500"
-              href="https://github.com/growly-official/cream-monorepo">
-              Github
-            </a>
-          </div>
-          <div className="h-full relative flex flex-col items-center">
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<GettingStarted />} />
-                <Route path="chat/:agentId" element={<Chat />} />
-              </Routes>
-            </BrowserRouter>
           </div>
         </main>
       </Theme>

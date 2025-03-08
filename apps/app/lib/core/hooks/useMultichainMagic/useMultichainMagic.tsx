@@ -28,6 +28,7 @@ export const MultichainStateSubEvents = {
   [StateEvent.GetTokenActivity]: ThreeStageState,
   [StateEvent.GetNftActivity]: ThreeStageState,
   [StateEvent.GetTalentScore]: BinaryState,
+  [StateEvent.GetMultichainData]: ThreeStageState,
 };
 
 export const useMultichainMagic = () => {
@@ -202,17 +203,37 @@ export const useMultichainMagic = () => {
     );
   };
 
-  const letsDoSomeMagic = async (addressInput: TAddress | undefined, hardRefresh?: boolean) => {
-    try {
-      const networks = Object.values(selectState(selectedNetworks)).flat();
-      if (networks.length > 0 && addressInput) {
-        await fetchMultichainTokenPortfolio(addressInput, hardRefresh);
-        await fetchActivityStats(addressInput);
-        await delayMs(1000);
+  const letsDoSomeMagic = async (
+    addressInput: TAddress | undefined,
+    networks: TChainName[],
+    hardRefresh?: boolean
+  ) => {
+    await newAsyncDispatch(
+      StateEvent.GetMultichainData,
+      {
+        onStartEvent: MultichainStateSubEvents.GetMultichainData.InProgress,
+        onErrorEvent: {
+          value: MultichainStateSubEvents.GetMultichainData.Idle,
+          toast: 'Failed to fetch multichain token portfolio.',
+        },
+        onFinishEvent: {
+          value: MultichainStateSubEvents.GetMultichainData.Finished,
+          toast: 'Fetched token portfolio.',
+        },
+        onResetEvent: MultichainStateSubEvents.GetMultichainData.Idle,
+      },
+      async () => {
+        try {
+          if (networks.length > 0 && addressInput) {
+            await fetchMultichainTokenPortfolio(addressInput, hardRefresh);
+            await fetchActivityStats(addressInput);
+            await delayMs(1000);
+          }
+        } catch (error) {
+          console.log(error);
+        }
       }
-    } catch (error) {
-      console.log(error);
-    }
+    );
   };
 
   return {

@@ -42,6 +42,11 @@ export function isCacheExpires(cachePayload: CachePayload<any>) {
   return moment().unix() >= cachePayload.cachedDate + cachePayload.expiredAfter;
 }
 
+export function isValidStorageKey(key: string) {
+  let cachedData = getJsonCacheData(key);
+  return !!cachedData && !isCacheExpires(cachedData);
+}
+
 export async function getRevalidatedJsonData<T>(
   key: string,
   revalidateMethod?: () => Promise<CachePayload<T>>,

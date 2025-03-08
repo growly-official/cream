@@ -1,11 +1,9 @@
 import Dashboard from './Dashboard';
 import React from 'react';
-import { useNativeMagicInit } from '@/core';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 
 const GettingStarted = () => {
-  useNativeMagicInit();
   const { isConnected } = useAccount();
   return (
     <React.Fragment>

@@ -9,6 +9,7 @@ import {
   TTokenTransferActivity,
 } from 'chainsmith-sdk/types';
 import { SetState, StateEventRegistry, UseState } from '../types';
+import { TSonicUserPointsStats } from 'chainsmith-sdk/plugins';
 
 const defaultActivityStats: TActivityStats = {
   totalTxs: 0,
@@ -49,15 +50,17 @@ const defaultChainStats: TChainStats = {
   countActiveChainTxs: 0,
 };
 
-export enum ChainAppStage {
+export enum NativeAppStage {
   DisplayProfile = 0,
   GetBased = 1,
 }
 
 export interface INativeMagicContext {
-  appStage: UseState<ChainAppStage>;
+  appStage: UseState<NativeAppStage>;
   stateEvents: StateEventRegistry;
   setStateEvents: SetState<StateEventRegistry>;
+
+  sonicPoints: UseState<TSonicUserPointsStats | undefined>;
 
   // Raw
   currentNativeChain: UseState<TChainName>;
@@ -81,7 +84,8 @@ export const NativeMagicProvider = ({ children }: Props) => {
   const currentNativeChain = useState<TChainName>('sonic');
   const [stateEvents, setStateEvents] = useState<StateEventRegistry>({});
 
-  const appStage = useState<ChainAppStage>(ChainAppStage.DisplayProfile);
+  const appStage = useState<NativeAppStage>(NativeAppStage.DisplayProfile);
+  const sonicPoints = useState<TSonicUserPointsStats | undefined>(undefined);
   // All transactions and activity stats
   const allTransactions = useState<TTokenTransferActivity[]>([]);
   const activityStats = useState<TActivityStats>(defaultActivityStats);
@@ -104,6 +108,7 @@ export const NativeMagicProvider = ({ children }: Props) => {
         stateEvents,
         setStateEvents,
         currentNativeChain,
+        sonicPoints,
 
         // Raw
         tokenPortfolio,

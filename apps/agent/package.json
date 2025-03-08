@@ -10,7 +10,7 @@
     "dev:script": "bun run ./scripts/index.ts"
   },
   "dependencies": {
-    "chainsmith-sdk": "^1.0.2-alpha.11",
+    "chainsmith-sdk": "^1.0.2-alpha.13",
     "@elizaos/adapter-sqlite": "0.1.9",
     "@elizaos/adapter-supabase": "0.1.9",
     "@elizaos/client-auto": "0.1.9",

@@ -164,7 +164,7 @@ export const useMultichainMagic = () => {
     );
   };
 
-  const fetchMultichainTokenPortfolio = async (addressInput: TAddress) => {
+  const fetchMultichainTokenPortfolio = async (addressInput: TAddress, hardRefresh?: boolean) => {
     return newAsyncDispatch(
       StateEvent.GetTokenPortfolio,
       {
@@ -181,13 +181,16 @@ export const useMultichainMagic = () => {
       },
       async () => {
         const cachedTokenPortfolio = await getRevalidatedJsonData(
-          `${addressInput}.tokenPortfolio`,
+          `${addressInput}.multichainTokenPortfolio`,
           async () => {
             const tokenPortfolio = await new EvmApiService().getWalletTokenPortfolio(
               addressInput,
               selectState(selectedNetworks)['evm'] || []
             );
             return buildCachePayload(tokenPortfolio, 1000 * 60 * 60 * 5);
+          },
+          {
+            forceRefetch: hardRefresh,
           }
         );
         if (cachedTokenPortfolio) {
@@ -199,11 +202,11 @@ export const useMultichainMagic = () => {
     );
   };
 
-  const letsDoSomeMagic = async (addressInput: TAddress | undefined) => {
+  const letsDoSomeMagic = async (addressInput: TAddress | undefined, hardRefresh?: boolean) => {
     try {
       const networks = Object.values(selectState(selectedNetworks)).flat();
       if (networks.length > 0 && addressInput) {
-        await fetchMultichainTokenPortfolio(addressInput);
+        await fetchMultichainTokenPortfolio(addressInput, hardRefresh);
         await fetchActivityStats(addressInput);
         await delayMs(1000);
       }

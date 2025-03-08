@@ -21,26 +21,26 @@ export const NativeStateSubEvents = {
   [StateEvent.GetNftPortfolio]: ThreeStageState,
   [StateEvent.GetTokenActivity]: ThreeStageState,
   [StateEvent.GetNftActivity]: ThreeStageState,
-  [StateEvent.GetTalentScore]: BinaryState,
+  [StateEvent.GetOnchainScore]: ThreeStageState,
 };
 
 const service = new SonicChainApiService();
 
 export const useNativeMagic = () => {
-  const magicContext = useNativeMagicContext();
   const {
     stateEvents,
     setStateEvents,
     // Raw
     allTransactions,
     tokenPortfolio,
+    sonicPoints,
 
     // Insights
     chainStats,
     activityStats,
     tokenPortfolioStats,
     totalGasInETH,
-  } = magicContext;
+  } = useNativeMagicContext();
 
   const dispatchStateEvent = (eventName: StateEvent, status: StateOption) => {
     setStateEvents(stateEvents => ({ ...stateEvents, [eventName]: status }));
@@ -137,7 +137,7 @@ export const useNativeMagic = () => {
     );
   };
 
-  const fetchTokenPortfolio = async (addressInput: TAddress) => {
+  const fetchTokenPortfolio = async (addressInput: TAddress, hardRefresh?: boolean) => {
     return newAsyncDispatch(
       StateEvent.GetTokenPortfolio,
       {
@@ -158,6 +158,9 @@ export const useNativeMagic = () => {
           async () => {
             const tokenPortfolio = await service.getWalletTokenPortfolio(addressInput);
             return buildCachePayload(tokenPortfolio, 1000 * 60 * 60 * 5);
+          },
+          {
+            forceRefetch: hardRefresh,
           }
         );
         if (cachedTokenPortfolio) {
@@ -169,10 +172,33 @@ export const useNativeMagic = () => {
     );
   };
 
-  const letsDoSomeMagic = async (addressInput: TAddress | undefined) => {
+  const fetchPoints = async (addressInput: TAddress) => {
+    return newAsyncDispatch(
+      StateEvent.GetOnchainScore,
+      {
+        onStartEvent: NativeStateSubEvents.GetOnchainScore.InProgress,
+        onErrorEvent: {
+          value: NativeStateSubEvents.GetOnchainScore.Idle,
+          toast: 'Failed to fetch Sonic points.',
+        },
+        onFinishEvent: {
+          value: NativeStateSubEvents.GetOnchainScore.Finished,
+          toast: 'Fetched Sonic points successfully.',
+        },
+        onResetEvent: NativeStateSubEvents.GetOnchainScore.Idle,
+      },
+      async () => {
+        const points = await service.getPointStats(addressInput);
+        setState(sonicPoints)(points);
+      }
+    );
+  };
+
+  const letsDoSomeMagic = async (addressInput: TAddress | undefined, hardRefresh?: boolean) => {
     try {
       if (addressInput) {
-        await fetchTokenPortfolio(addressInput);
+        await fetchTokenPortfolio(addressInput, hardRefresh);
+        await fetchPoints(addressInput);
         await fetchActivityStats(addressInput);
         await delayMs(1000);
       }

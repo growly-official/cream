@@ -15,7 +15,7 @@ const YieldFarmingButton = ({
   const [openModal, setOpenModal] = useState<boolean>(false);
   return (
     <TooltipContainer tooltipId={`yield-farming`} tooltipContent={tooltipContent}>
-      <Button {...buttonProps} onClick={() => setOpenModal(true)} size={'2'} color="yellow">
+      <Button {...buttonProps} onClick={() => setOpenModal(true)} size={'2'}>
         {children}
       </Button>
       <YieldFarmingModal open={openModal} handleOpen={open => setOpenModal(open)} />

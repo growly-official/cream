@@ -1,5 +1,5 @@
 import { formatNumberUSD } from '@/core';
-import { Table } from '@radix-ui/themes';
+import { Avatar, Table } from '@radix-ui/themes';
 import { TAddress, TMarketTokenList } from 'chainsmith-sdk/types';
 import React from 'react';
 import ChainIcon from '../ChainIcon/ChainIcon';
@@ -20,7 +20,7 @@ const NativeTokenPortfolioTable = ({ address, tokenData }: Props) => {
   return (
     <React.Fragment>
       <div className="mb-10">
-        <div className="flex gap-2 justify-center items-center border border-slate-200 w-fit rounded-xl py-1 px-3 shadow-md">
+        <div className="flex gap-2 justify-center items-center w-fit rounded-xl py-1 px-3 shadow-xl">
           <ChainIcon size={20} chainName={'sonic'} />
           <h3 className="font-bold">{getChainByName('sonic').name}</h3>
           <h3 className="text-sm ml-4">
@@ -45,9 +45,10 @@ const NativeTokenPortfolioTable = ({ address, tokenData }: Props) => {
               .map(token => (
                 <Table.Row key={token.symbol}>
                   <Table.Cell>
-                    <img
-                      src={token.logoURI}
-                      alt={`${token.name} logo`}
+                    <Avatar
+                      src={`${token.logoURI}?raw=true`}
+                      alt={`${token.name.slice(1)}`}
+                      fallback={token.name.slice(0, 1)}
                       className="mr-3 inline-block h-8 w-8 rounded-full"
                     />
                     {token.name}
@@ -74,7 +75,6 @@ const NativeTokenPortfolioTable = ({ address, tokenData }: Props) => {
                         supportedChains={[getChainIdByName('sonic')]}>
                         <ArrowRightLeftIcon size={10} />
                       </SwapButton>
-
                       <AnalyzeTokenButton
                         token={token}
                         tooltipContent="Analyze Token"

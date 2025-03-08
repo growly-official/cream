@@ -8,6 +8,7 @@ export enum StateEvent {
   GetTokenActivity = 'GetTokenActivity',
   GetNftActivity = 'GetNftActivity',
   GetTalentScore = 'GetTalentScore',
+  GetOnchainScore = 'GetOnchainScore',
 }
 
 export enum BinaryState {

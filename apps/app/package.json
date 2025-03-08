@@ -39,7 +39,7 @@
     "@types/react-lottie": "^1.2.10",
     "@uniswap/default-token-list": "^12.34.0",
     "axios": "^1.7.9",
-    "chainsmith-sdk": "^1.0.2-alpha.11",
+    "chainsmith-sdk": "^1.0.2-alpha.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",

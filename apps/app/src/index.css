@@ -11,10 +11,6 @@ body {
   font-family: 'San Francisco Rounded';
 }
 
-h1 {
-  font-family: 'San Francisco Rounded Medium';
-}
-
 @keyframes fadeDown {
   0% {
     opacity: 1;

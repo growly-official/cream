@@ -40,11 +40,7 @@ const Dashboard: React.FC<any> = () => {
         <div className="flex bg-white rounded-xl gap-z flex-wrap">
           <div className="rounded-lg flex gap-3 shadow-md w-full flex-wrap rounded-xl px-5 py-5">
             <div className="mr-10">
-              <div
-                className="mb-2 mt-5 flex gap-3 items-center"
-                style={{
-                  fontFamily: 'San Francisco Rounded Medium',
-                }}>
+              <div className="mb-2 mt-5 flex gap-3 items-center">
                 Total Balance{' '}
                 <RefreshCwIcon
                   size={12}

@@ -336,10 +336,10 @@ module.exports = {
         '3xl': '2048px',
       },
       fontFamily: {
-        display: ['Coinbase Regular', ...defaultTheme.fontFamily.sans],
-        sans: ['Coinbase Regular', ...defaultTheme.fontFamily.sans],
-        mono: ['Coinbase Regular', ...defaultTheme.fontFamily.sans],
-        britney: ['Coinbase Regular', ...defaultTheme.fontFamily.sans],
+        display: ['San Francisco Rounded Regular', ...defaultTheme.fontFamily.sans],
+        sans: ['San Francisco Rounded Regular', ...defaultTheme.fontFamily.sans],
+        mono: ['San Francisco Rounded Regular', ...defaultTheme.fontFamily.sans],
+        britney: ['San Francisco Rounded Regular', ...defaultTheme.fontFamily.sans],
       },
       spacing: {
         80: '20rem',

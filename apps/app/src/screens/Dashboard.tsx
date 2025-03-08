@@ -36,11 +36,15 @@ const Dashboard: React.FC<any> = () => {
 
   return (
     <React.Fragment>
-      <div className="py-3 px-4 rounded-xl flex flex-col max-w-[80rem] shadow-xl w-full h-fit bg-white bg-opacity-40 backdrop-filter backdrop-blur-lg mb-5">
+      <div className="py-3 px-4 rounded-xl flex flex-col max-w-[80rem] shadow-xl w-full h-fit bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg mb-5">
         <div className="flex bg-white rounded-xl gap-z flex-wrap">
           <div className="rounded-lg flex gap-3 shadow-md w-full flex-wrap rounded-xl px-5 py-5">
             <div className="mr-10">
-              <div className="mb-2 mt-5 flex gap-3 items-center">
+              <div
+                className="mb-2 mt-5 flex gap-3 items-center"
+                style={{
+                  fontFamily: 'San Francisco Rounded Medium',
+                }}>
                 Total Balance{' '}
                 <RefreshCwIcon
                   size={12}

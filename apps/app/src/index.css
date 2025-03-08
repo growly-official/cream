@@ -2,11 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html,
-  body {
-    @apply dark:bg-white;
-  }
+html,
+body {
+  @apply dark:bg-white;
+}
+
+* {
+  font-family: 'San Francisco Rounded';
+}
+
+h1 {
+  font-family: 'San Francisco Rounded Medium';
 }
 
 @keyframes fadeDown {

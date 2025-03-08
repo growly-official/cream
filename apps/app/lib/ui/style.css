@@ -3,39 +3,13 @@
 @import 'tailwindcss/utilities';
 
 @font-face {
-  font-family: 'Coinbase';
-  src: url('../../fonts/CoinbaseDisplay-Regular.ttf');
+  font-family: San Francisco Rounded;
+  font-weight: 400;
+  src: url(../../fonts/SF/SF-Pro-Rounded-Regular.otf) format('woff2');
 }
 
-@layer base {
-  @font-face {
-    font-family: Coinbase Regular;
-    font-weight: 400;
-    src: url(/fonts/CoinbaseDisplay-Regular.woff2) format('woff2');
-  }
-  @font-face {
-    font-family: Coinbase Regular;
-    font-weight: 500;
-    src: url(/fonts/CoinbaseDisplay-Medium.woff2) format('woff2');
-  }
-  @font-face {
-    font-family: 'Coinbase Regular' monospace;
-    font-weight: 400;
-    src: url(/fonts/CoinbaseMono-Regular.woff2) format('woff2');
-  }
-  @font-face {
-    font-family: 'Coinbase Regular' monospace;
-    font-weight: 500;
-    src: url(/fonts/CoinbaseMono-Medium.woff2) format('woff2');
-  }
-  @font-face {
-    font-family: 'Coinbase Regular' sans-serif;
-    font-weight: 400;
-    src: url(/fonts/CoinbaseMono-Regular.woff2) format('woff2');
-  }
-  @font-face {
-    font-family: 'Coinbase Regular' sans-serif;
-    font-weight: 500;
-    src: url(/fonts/CoinbaseMono-Regular.woff2) format('woff2');
-  }
+@font-face {
+  font-family: San Francisco Rounded;
+  font-weight: 500;
+  src: url(../../fonts/SF/SF-Pro-Rounded-Medium.otf) format('woff2');
 }

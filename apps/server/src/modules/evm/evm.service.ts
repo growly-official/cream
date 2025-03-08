@@ -3,6 +3,7 @@ import {
   TAddress,
   TChainName,
   TMultichain,
+  TNftBalance,
   TTokenPortfolio,
   TTokenTransferActivity,
 } from 'chainsmith-sdk/types';
@@ -28,5 +29,20 @@ export class EvmChainService {
     return chainsmithSdk(chainNames).token.listMultichainTokenTransferActivities(
       AdapterRegistry.Evmscan
     )(walletAddress);
+  }
+
+  async getMultichainNftCollectibles(
+    walletAddress: TAddress,
+    chainNames: TChainName[]
+  ): Promise<TMultichain<TNftBalance[]>> {
+    const result: TMultichain<TNftBalance[]> = {};
+    const sdk = chainsmithSdk(chainNames);
+    for (const chainName of chainNames) {
+      result[chainName] = await sdk.token.getNftCollectibles(AdapterRegistry.Reservoir)(
+        chainName,
+        walletAddress
+      );
+    }
+    return result;
   }
 }

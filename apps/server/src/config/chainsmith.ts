@@ -13,6 +13,7 @@ import {
   PaintSwapAdapter,
   ShadowExchangeAdapter,
   ShadowExchangeApiAdapter,
+  AnglesApiAdapter,
 } from 'chainsmith-sdk/adapters';
 import { EvmTokenPlugin } from 'chainsmith-sdk/plugins';
 import { alchemy } from 'chainsmith-sdk/rpc';
@@ -28,6 +29,7 @@ const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY || '';
 
 export const AdapterRegistry = {
   Alchemy: new AlchemyAdapter(ALCHEMY_API_KEY, new EvmTokenPlugin()),
+  AnglesApi: new AnglesApiAdapter(),
   BeetsApi: new BeetsApiAdapter(),
   CoinMarketcap: new CoinMarketcapAdapter(COINMARKETCAP_API_BASE_URL, COINMARKETCAP_API_KEY),
   DexScreener: new DexScreenerAdapter(),

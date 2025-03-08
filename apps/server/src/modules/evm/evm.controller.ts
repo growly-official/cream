@@ -6,6 +6,7 @@ import type {
   TTokenTransferActivity,
   TMultichain,
   TTokenPortfolio,
+  TNftBalance,
 } from 'chainsmith-sdk/types';
 
 @Controller('/evm')
@@ -29,5 +30,13 @@ export class EvmController {
       payload.walletAddress,
       payload.chainNames
     );
+  }
+
+  @Post('/nfts')
+  async getMultichainNftCollectibles(
+    @Body() payload: { walletAddress: TAddress; chainNames: TChainName[] }
+  ): Promise<TMultichain<TNftBalance[]>> {
+    if (payload.chainNames.length === 0) throw new Error('No chain provided');
+    return this.service.getMultichainNftCollectibles(payload.walletAddress, payload.chainNames);
   }
 }

@@ -8,7 +8,7 @@ import type {
   TTokenPortfolio,
   TTokenTransferActivity,
 } from 'chainsmith-sdk/types';
-import type { TSonicUserPointsStats } from 'chainsmith-sdk/plugins';
+import type { TSonicEcosystemApp, TSonicUserPointsStats } from 'chainsmith-sdk/plugins';
 import { getChainByName } from 'chainsmith-sdk/utils';
 import { ChainsmithSdk } from 'chainsmith-sdk';
 
@@ -27,6 +27,10 @@ export class SonicService {
 
   async getUserPointStats(walletAddress: TAddress): Promise<TSonicUserPointsStats> {
     return this.sdk.sonicPoint.fetchUserPointsStats(walletAddress);
+  }
+
+  async getSonicActivePointsApps(): Promise<TSonicEcosystemApp[]> {
+    return this.sdk.sonicPoint.getSonicActivePointApps();
   }
 
   async getNftCollectibles(walletAddress: TAddress): Promise<TNftBalance[]> {

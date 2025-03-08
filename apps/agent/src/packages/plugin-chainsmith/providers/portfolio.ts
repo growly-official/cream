@@ -9,8 +9,7 @@ import {
 import NodeCache from 'node-cache';
 import * as path from 'node:path';
 
-import { ChainsmithSdk } from 'chainsmith-sdk/index.ts';
-import { alchemy } from 'chainsmith-sdk/rpc/index.ts';
+import { alchemy } from 'chainsmith-sdk/rpc';
 import {
   TAddress,
   TChain,
@@ -19,16 +18,16 @@ import {
   TMarketTokenList,
   TMultichain,
   TTokenChainData,
-} from 'chainsmith-sdk/types/index.ts';
+} from 'chainsmith-sdk/types';
 import {
   aggregateMultichainTokenBalance,
   buildEvmChains,
   formatNumberSI,
   formatNumberUSD,
   getChainByName,
-} from 'chainsmith-sdk/utils/index.ts';
-import { createClient } from 'chainsmith-sdk/wrapper.ts';
+} from 'chainsmith-sdk/utils';
 import { AdapterRegistry } from '../config/chainsmith.ts';
+import { ChainsmithSdk, initChainsmithSdk, wrapper } from 'chainsmith-sdk';
 
 export class PortfolioProvider {
   private sdk: ChainsmithSdk;
@@ -45,13 +44,13 @@ export class PortfolioProvider {
   ) {
     this.address = address;
     this.chains = chains;
-    this.sdk = ChainsmithSdk.init(chains);
+    this.sdk = initChainsmithSdk(chains);
     this.cache = new NodeCache({ stdTTL: this.CACHE_EXPIRY_SEC });
   }
 
   getPublicClient(chainName: TChainName): TClient {
     const chain = getChainByName(chainName);
-    return createClient({ chain });
+    return wrapper.createClient({ chain });
   }
 
   async getENSName(): Promise<string> {

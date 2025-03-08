@@ -2,7 +2,7 @@ services:
   agent:
     platform: linux/amd64
     command: ['bun', 'start:agent']
-    image: growly-agent
+    image: cream-agent
     stdin_open: true
     tty: true
     volumes:
@@ -16,7 +16,7 @@ services:
   server:
     platform: linux/amd64
     command: ['bun', 'start:server']
-    image: growly-agent
+    image: cream-agent
     stdin_open: true
     tty: true
     volumes:

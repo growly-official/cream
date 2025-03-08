@@ -11,7 +11,7 @@ import {
 } from 'chainsmith-sdk/types';
 import { Card, Separator, TextField } from '@radix-ui/themes';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
-import { EcosystemRegistry } from 'chainsmith-sdk/src';
+import { Chains } from 'chainsmith-sdk/data';
 import { getChainByName } from 'chainsmith-sdk/utils';
 
 type Props = {
@@ -28,7 +28,7 @@ type Props = {
 
 export default ({
   ecosystem = 'evm',
-  ecosystemRegistry = EcosystemRegistry,
+  ecosystemRegistry = Chains.EcosystemRegistry,
   selectedChains = {},
   searchQuery: { chainName = '', onChainNameChanged },
   onChainSelected,

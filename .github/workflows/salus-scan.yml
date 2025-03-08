@@ -1,4 +1,4 @@
-name: Growly Security Scan
+name: Cream Security Scan
 
 on: [pull_request, push]
 

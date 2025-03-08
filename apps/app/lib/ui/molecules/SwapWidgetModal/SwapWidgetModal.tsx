@@ -12,7 +12,7 @@ type Props = {
 };
 
 const widgetConfig: WidgetConfig = {
-  integrator: 'Growly',
+  integrator: 'Cream',
   variant: 'wide',
   appearance: 'light',
   theme: {
@@ -26,7 +26,7 @@ const SwapWidgetModal = ({ type, open, handleOpen, token, toAddress, supportedCh
   return (
     <Modal open={open} handleOpen={handleOpen}>
       <LiFiWidget
-        integrator="Growly"
+        integrator="Cream"
         hiddenUI={['poweredBy', 'language']}
         config={{
           ...widgetConfig,

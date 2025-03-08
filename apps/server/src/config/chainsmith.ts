@@ -1,4 +1,4 @@
-import { ChainsmithSdk, TChain, TChainName, initChainsmithSdk } from 'chainsmith-sdk';
+import { ChainsmithSdk, initChainsmithSdk } from 'chainsmith-sdk';
 import {
   AlchemyAdapter,
   UniswapSdkAdapter,
@@ -16,6 +16,7 @@ import {
 } from 'chainsmith-sdk/adapters';
 import { EvmTokenPlugin } from 'chainsmith-sdk/plugins';
 import { alchemy } from 'chainsmith-sdk/rpc';
+import { TChain, TChainName } from 'chainsmith-sdk/types';
 import { buildEvmChains } from 'chainsmith-sdk/utils';
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || '';

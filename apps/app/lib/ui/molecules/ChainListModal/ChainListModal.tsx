@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Button, Modal } from '../../atoms';
-import { EcosystemRegistry, Ecosystems } from 'chainsmith-sdk/src';
 import { CircleCheck } from 'lucide-react';
 import { Atoms } from '../..';
 import ChainList from '../ChainList/ChainList';
-import { TMultichain, TChainEcosystem, TChainName } from 'chainsmith-sdk/types';
 import clsx from 'clsx';
 import { countExistentialObject, filterObject } from 'chainsmith-sdk/utils';
 import { LocalEcosystemRegistry, mustBeBoolean } from '@/core';
+import { Chains } from 'chainsmith-sdk/data';
+import type { TMultichain, TChainEcosystem, TChainName } from 'chainsmith-sdk/types';
 
 type Props = {
   open: boolean;
@@ -42,8 +42,8 @@ const ChainListModal = ({
           <Atoms.Select
             value={selectedEcosystem}
             onValueChange={v => setSelectedEcosystem(v as TChainEcosystem)}
-            options={Ecosystems.map(ecosystem => ({
-              label: EcosystemRegistry[ecosystem]!.name,
+            options={Chains.Ecosystems.map(ecosystem => ({
+              label: Chains.EcosystemRegistry[ecosystem]!.name,
               value: ecosystem,
             }))}
           />

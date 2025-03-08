@@ -5,8 +5,8 @@ import type {
   TTokenTransferActivity,
   TTokenPortfolio,
   TNftBalance,
-} from 'chainsmith-sdk';
-import type { TSonicUserPointsStats } from 'chainsmith-sdk/plugins';
+} from 'chainsmith-sdk/types';
+import { TSonicUserPointsStats } from 'chainsmith-sdk/plugins';
 
 @Controller('/sonic')
 export class SonicController {

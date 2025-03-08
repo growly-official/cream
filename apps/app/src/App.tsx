@@ -17,11 +17,11 @@ function App() {
           <div className="flex justify-between w-full items-center px-10">
             <div className="mb-3 flex items-center gap-4">
               <img src="/logo.png" width={30} className="rounded-[5px]" />
-              <h2 className="text-lg font-bold">Growly</h2>
+              <h2 className="text-lg font-bold">Cream</h2>
             </div>
             <a
               className="font-bold hover:text-orange-500"
-              href="https://github.com/growly-official/growly-monorepo">
+              href="https://github.com/growly-official/cream-monorepo">
               Github
             </a>
           </div>

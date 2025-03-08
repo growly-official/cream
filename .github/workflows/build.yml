@@ -1,4 +1,4 @@
-name: Growly Build
+name: Cream Build
 on:
   push:
     branches: ['main']

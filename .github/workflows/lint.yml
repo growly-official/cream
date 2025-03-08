@@ -1,4 +1,4 @@
-name: Growly Lint
+name: Cream Lint
 on:
   push:
     branches: ['main']

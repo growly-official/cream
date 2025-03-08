@@ -1,12 +1,11 @@
 # Use a specific Node.js version for better reproducibility
-FROM node:23.7.0-slim AS builder
+FROM node:23.3.0-slim AS builder
 
-# Install pnpm globally and install necessary build tools
+# Install bun globally and install necessary build tools
 RUN npm install -g bun && \
     apt-get update && \
     apt-get install -y git python3 make g++ && \
     apt-get clean && \
-    rm -rf node_modules && \ 
     rm -rf /var/lib/apt/lists/*
 
 # Set Python 3 as the default python
@@ -14,32 +13,26 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Set the working directory
 WORKDIR /app
-# Copy core
-COPY ./packages/core/ ./packages/core
-
-# Copy agent
-COPY ./apps/agent/package.json ./apps/agent/package.json
-COPY ./apps/agent/src ./apps/agent/src
-COPY ./apps/agent/tsconfig.json ./apps/agent/tsconfig.json
-
-# Copy server
-COPY ./apps/server/package.json ./apps/server/package.json
-COPY ./apps/server/src ./apps/server/src
-COPY ./apps/server/tsconfig.json ./apps/server/tsconfig.json
-COPY ./apps/server/tsconfig.build.json ./apps/server/tsconfig.build.json
 
 # Copy package.json and other configuration files
 COPY package.json ./
-COPY bun.lockb ./
-COPY tsconfig.base.json ./
+COPY tsconfig.json ./
+COPY tsconfig.build.json ./
+
+# Copy the rest of the application code
+COPY ./src ./src
 
 # Install dependencies and build the project
 RUN bun install 
 # RUN bun run build 
 
 # Create dist directory and set permissions
-RUN chown -R node:node /app && \
+RUN mkdir -p /app/dist && \
+    chown -R node:node /app && \
     chmod -R 755 /app
+
+# Switch to node user
+USER node
 
 # Create a new stage for the final image
 FROM node:23.3.0-slim
@@ -55,10 +48,11 @@ WORKDIR /app
 
 # Copy built artifacts and production dependencies from the builder stage
 COPY --from=builder /app/package.json /app/
-COPY --from=builder /app/tsconfig.base.json /app/
 COPY --from=builder /app/node_modules /app/node_modules
-COPY --from=builder /app/apps/agent/ /app/apps/agent/
-COPY --from=builder /app/apps/server/ /app/apps/server/
-COPY --from=builder /app/packages/core/ /app/packages/core/
+COPY --from=builder /app/src /app/src
+COPY --from=builder /app/tsconfig.json /app/
+COPY --from=builder /app/tsconfig.build.json /app/
 
-EXPOSE 3000 3005
+EXPOSE 8080
+# Set the command to run the application
+CMD ["bun", "start", "--non-interactive"]

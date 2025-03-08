@@ -4,13 +4,14 @@ import { z } from 'zod';
 export const chainsmithEnvSchema = z
   .object({
     EVM_PRIVATE_KEY: z.string().optional(),
+    TAVILY_API_KEY: z.string().optional(),
   })
   .and(
     z.object({
       ALCHEMY_API_KEY: z.string().min(1, 'Alchemy URL is required'),
       COINMARKETCAP_API_KEY: z.string().min(1, 'Coinmarketcap API key is required'),
       ETHERSCAN_API_KEY: z.string().min(1, 'Etherscan API key is required'),
-      TAVILY_API_KEY: z.string().min(1, 'Tavily API key is required'),
+      // TAVILY_API_KEY: z.string().min(1, 'Tavily API key is required'),
     })
   );
 

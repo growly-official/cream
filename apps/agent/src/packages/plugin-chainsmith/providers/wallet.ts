@@ -16,7 +16,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { alchemy } from 'chainsmith-sdk/rpc';
 import { TChain, TChainName, TClient, TWalletClient } from 'chainsmith-sdk/types';
 import { buildEvmChains, getChainByName } from 'chainsmith-sdk/utils';
-import { createClient, createWalletClient } from 'chainsmith-sdk/wrapper';
+import { wrapper } from 'chainsmith-sdk';
 
 export class WalletProvider {
   private cache: NodeCache;
@@ -41,7 +41,7 @@ export class WalletProvider {
 
   getPublicClient(chainName: TChainName): TClient {
     const chain = getChainByName(chainName);
-    return createClient({ chain });
+    return wrapper.createClient({ chain });
   }
 
   async getENSName(): Promise<string> {
@@ -55,7 +55,7 @@ export class WalletProvider {
 
   getWalletClient(chainName: TChainName): TWalletClient {
     const chain = getChainByName(chainName);
-    return createWalletClient({ chain, account: this.account as any }); // TODO: Debug why error?
+    return wrapper.createWalletClient({ chain, account: this.account as any }); // TODO: Debug why error?
   }
 
   async getChainWalletBalance(chainName: TChainName): Promise<string | null> {

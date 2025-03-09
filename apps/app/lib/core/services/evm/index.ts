@@ -37,11 +37,11 @@ export class EvmApiService extends AxiosService {
   async getMultichainNftCollectibles(
     walletAddress: TAddress,
     chainNames: TChainName[]
-  ): Promise<TNftBalance[]> {
-    return this.post<{ walletAddress: TAddress; chainNames: TChainName[] }, TNftBalance[]>(
-      `${BACKEND_SERVER_URL}/evm/nfts`,
-      { walletAddress, chainNames }
-    );
+  ): Promise<TMultichain<TNftBalance[]>> {
+    return this.post<
+      { walletAddress: TAddress; chainNames: TChainName[] },
+      TMultichain<TNftBalance[]>
+    >(`${BACKEND_SERVER_URL}/evm/nfts`, { walletAddress, chainNames });
   }
 
   async fetchMultichainNftActivity(

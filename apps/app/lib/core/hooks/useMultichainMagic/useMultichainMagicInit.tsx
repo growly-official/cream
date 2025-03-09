@@ -3,18 +3,17 @@ import { useMultichainMagicContext } from './useMultichainMagicContext';
 import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { selectState } from '../../utils';
-import { BackgroundChains } from '../../chainsmith';
 
 export const useMultichainMagicInit = () => {
   const {
-    mutate: { letsDoSomeMagic },
+    mutate: { fetchMultichainData },
   } = useMultichainMagic();
   const { selectedNetworks } = useMultichainMagicContext();
   const { address } = useAccount();
 
   useEffect(() => {
     if (address) {
-      letsDoSomeMagic(address, BackgroundChains);
+      fetchMultichainData(address);
     }
   }, [address, selectState(selectedNetworks)]);
 };

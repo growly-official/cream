@@ -1,1 +1,1 @@
-export const BACKEND_SERVER_URL = `http://localhost:${import.meta.env.VITE_SERVER_PORT}`;
+export const BACKEND_SERVER_URL = import.meta.env.VITE_BACKEND_SERVER_URL;

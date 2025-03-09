@@ -1,5 +1,11 @@
 import { countExistentialObject, filterObject, getChainByName } from 'chainsmith-sdk/utils';
-import { BackgroundChains, getJsonCacheData, useMultichainMagic } from '@/core';
+import {
+  BackgroundChains,
+  getJsonCacheData,
+  setState,
+  useMultichainMagic,
+  useMultichainMagicContext,
+} from '@/core';
 import { Atoms, Molecules } from '@/ui';
 import { useMemo, useState } from 'react';
 import { TMultichain } from 'chainsmith-sdk/types';
@@ -10,8 +16,9 @@ import { buildCachePayload, storeJsonCacheData, SELECTED_NETWORKS } from '@/core
 const MultichainOnboarding = () => {
   const { address } = useAccount();
   const {
-    mutate: { letsDoSomeMagic },
+    mutate: { fetchMultichainData },
   } = useMultichainMagic();
+  const { selectedNetworks } = useMultichainMagicContext();
   const [key, expiration] = useMemo(() => SELECTED_NETWORKS(address), [address]);
   const [currentSelectedNetworks, setCurrentSelectedNetworks] = useState<TMultichain<boolean>>(
     getJsonCacheData(key)?.data || {}
@@ -19,7 +26,12 @@ const MultichainOnboarding = () => {
 
   const handleSelectNetworks = async () => {
     storeJsonCacheData(key, buildCachePayload(currentSelectedNetworks, expiration));
-    await letsDoSomeMagic(address, filterObject(currentSelectedNetworks, item => !!item) as any);
+    const _networks = filterObject(currentSelectedNetworks, item => item) as any;
+    setState(selectedNetworks)(networks => ({
+      ...networks,
+      evm: _networks,
+    }));
+    await fetchMultichainData(address, _networks);
   };
 
   return (

@@ -1,5 +1,5 @@
 import { TNftBalance } from 'chainsmith-sdk/types';
-import { UseState } from '.';
+import { LocalStorageCacheKey, UseState, buildCachePayload, storeJsonCacheData } from '.';
 
 export const mustBeBoolean = (v: any) => !!v;
 
@@ -11,6 +11,15 @@ export function selectState<T>(s: UseState<T>): T {
 
 export function setState<T>(s: UseState<T>) {
   return s[1];
+}
+
+export function setStateAndStoreInCache<T>(
+  state: UseState<T>,
+  [key, expiration]: LocalStorageCacheKey,
+  data: T
+) {
+  storeJsonCacheData(key, buildCachePayload(data, expiration));
+  setState(state)(data);
 }
 
 export function makeid(length: number) {

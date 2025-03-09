@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import ChainListItem from './ChainListItem';
-import { EvmChainList } from 'chainsmith-sdk/data';
-import { ChainTypeBuilder } from 'chainsmith-sdk/wrapper';
+import { wrapper } from 'chainsmith-sdk';
+import { Chains } from 'chainsmith-sdk/data';
 
 const meta: Meta<typeof ChainListItem> = {
   component: ChainListItem,
@@ -14,6 +14,6 @@ type Story = StoryObj<typeof ChainListItem>;
 
 export const Default: Story = {
   args: {
-    chain: new ChainTypeBuilder(EvmChainList.mainnet).withEcosystem('evm').build(),
+    chain: new wrapper.ChainTypeBuilder(Chains.EvmChainList.mainnet).withEcosystem('evm').build(),
   },
 };

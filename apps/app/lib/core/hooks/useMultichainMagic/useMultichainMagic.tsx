@@ -1,22 +1,16 @@
-import { calculateGasInETH, calculateMultichainTokenPortfolio } from 'chainsmith-sdk/utils';
-import { delayMs, selectState, setState } from '../../utils';
+import { calculateMultichainTokenPortfolio } from 'chainsmith-sdk/utils';
+import { calculateMultichainNFTPortfolio, delayMs, selectState, setState } from '../../utils';
 import { BinaryState, StateEvent, ThreeStageState } from '../../types/state.type';
 import { useMultichainMagicContext } from './useMultichainMagicContext';
-import {
-  TActivityStats,
-  TAddress,
-  TChainName,
-  TChainStats,
-  TMultichain,
-} from 'chainsmith-sdk/types';
-import { calculateEVMStreaksAndMetrics } from 'chainsmith-sdk/utils';
+import { TAddress, TChainName } from 'chainsmith-sdk/types';
 import { EvmApiService } from '../../services';
 import { buildCachePayload, getRevalidatedJsonData } from '../../helpers';
 import { useAsyncDispatch } from '..';
+import { MULTICHAIN_TOKEN_PORTFOLIO } from '../../constants';
 
 const service = new EvmApiService();
 
-export const MultichainStateSubEvents = {
+export const MultichainEvent = {
   [StateEvent.ActivityStats]: ThreeStageState,
   [StateEvent.GetAddress]: BinaryState,
   [StateEvent.GetTokenPortfolio]: ThreeStageState,
@@ -35,88 +29,43 @@ export const useMultichainMagic = () => {
     // Raw
     allTransactions,
     tokenPortfolio,
+    nftPortfolio,
+    nftActivity,
 
     // Insights
     chainStats,
     activityStats,
     tokenPortfolioStats,
     totalGasInETH,
+    nftPortfolioStats,
+    nftActivityStats,
   } = useMultichainMagicContext();
-  const { newAsyncDispatch, stateCheck, dispatchStateEvent } = useAsyncDispatch(
-    MultichainStateSubEvents,
-    [stateEvents, setStateEvents]
-  );
+
+  const { newAsyncDispatch, stateCheck, dispatchStateEvent } = useAsyncDispatch(MultichainEvent, [
+    stateEvents,
+    setStateEvents,
+  ]);
+
+  const getNetworks = () => selectState(selectedNetworks)['evm'] || [];
 
   const fetchActivityStats = async (addressInput: TAddress) => {
     return newAsyncDispatch(
       StateEvent.ActivityStats,
       {
-        onStartEvent: MultichainStateSubEvents.ActivityStats.InProgress,
-        onErrorEvent: { value: MultichainStateSubEvents.ActivityStats.Idle },
+        onStartEvent: MultichainEvent.ActivityStats.InProgress,
+        onErrorEvent: { value: MultichainEvent.ActivityStats.Idle },
         onFinishEvent: {
-          value: MultichainStateSubEvents.ActivityStats.Finished,
+          value: MultichainEvent.ActivityStats.Finished,
           toast: 'Activity stats fetched.',
         },
-        onResetEvent: MultichainStateSubEvents.ActivityStats.Idle,
+        onResetEvent: MultichainEvent.ActivityStats.Idle,
       },
       async () => {
-        const multichainTxs = await service.listMultichainTokenTransferActivities(
-          addressInput,
-          selectState(selectedNetworks)['evm'] || []
-        );
-        setState(allTransactions)(multichainTxs);
-
-        const totalChains: TChainName[] = Object.keys(multichainTxs) as TChainName[];
-        const filteredTransactions = Object.values(multichainTxs)
-          .flat()
-          .filter(tx => tx.from.toLowerCase() === addressInput.toLowerCase());
-        const _totalGasInETH = filteredTransactions.reduce(
-          (acc, curr) =>
-            acc + calculateGasInETH(Number.parseInt(curr.gasUsed), Number.parseInt(curr.gasPrice)),
-          0
-        );
-
-        // console.log("_totalGasInETH:", _totalGasInETH);
-        setState(totalGasInETH)(_totalGasInETH);
-
-        let mostActiveChainName: TChainName = totalChains.reduce((a, b) =>
-          (multichainTxs[a]?.length || 0) > (multichainTxs[b]?.length || 0) ? a : b
-        );
-
-        // Default chain should be 'Base'
-        if (multichainTxs[mostActiveChainName]?.length === 0) mostActiveChainName = 'base';
-
-        const _countActiveChainTxs = multichainTxs[mostActiveChainName]?.length || 0;
-
-        // Get Activity Stats
-        const stats: TMultichain<TActivityStats> = {};
-        for (const chain of totalChains) {
-          const chainTxs = multichainTxs[chain];
-          if (chainTxs?.length || 0 > 0) {
-            stats[chain] = calculateEVMStreaksAndMetrics(chainTxs || [], addressInput);
-          }
-        }
-        setState(activityStats)(stats);
-
-        // Get chain stats
-        const noActivityChains = totalChains.filter(
-          chain => multichainTxs[chain]?.length || 0 === 0
-        );
-        // Get unique active day, on most active chain 🫠
-        const { uniqueActiveDays } = calculateEVMStreaksAndMetrics(
-          multichainTxs[mostActiveChainName] || [],
-          addressInput
-        );
-
-        const _chainStats: TChainStats = {
-          totalChains,
-          mostActiveChainName,
-          noActivityChains,
-          countUniqueDaysActiveChain: uniqueActiveDays,
-          countActiveChainTxs: _countActiveChainTxs,
-        };
-        setState(chainStats)(_chainStats);
-
+        const stats = await service.fetchActivityStats(addressInput, getNetworks());
+        setState(allTransactions)(stats.multichainTxs);
+        setState(totalGasInETH)(stats.totalGasInETH);
+        setState(activityStats)(stats.activityStats);
+        setState(chainStats)(stats.chainStats);
         return stats;
       }
     );
@@ -126,26 +75,25 @@ export const useMultichainMagic = () => {
     return newAsyncDispatch(
       StateEvent.GetTokenPortfolio,
       {
-        onStartEvent: MultichainStateSubEvents.GetTokenPortfolio.InProgress,
+        onStartEvent: MultichainEvent.GetTokenPortfolio.InProgress,
         onErrorEvent: {
-          value: MultichainStateSubEvents.GetTokenPortfolio.Idle,
+          value: MultichainEvent.GetTokenPortfolio.Idle,
           toast: 'Failed to fetch multichain token portfolio.',
         },
         onFinishEvent: {
-          value: MultichainStateSubEvents.GetTokenPortfolio.Finished,
+          value: MultichainEvent.GetTokenPortfolio.Finished,
           toast: 'Fetched token portfolio.',
         },
-        onResetEvent: MultichainStateSubEvents.GetTokenPortfolio.Idle,
+        onResetEvent: MultichainEvent.GetTokenPortfolio.Idle,
       },
       async () => {
+        const networks = selectState(selectedNetworks)['evm'] || [];
+        const [key, expiration] = MULTICHAIN_TOKEN_PORTFOLIO(addressInput);
         const cachedTokenPortfolio = await getRevalidatedJsonData(
-          `${addressInput}.multichainTokenPortfolio`,
+          key,
           async () => {
-            const tokenPortfolio = await service.getWalletTokenPortfolio(
-              addressInput,
-              selectState(selectedNetworks)['evm'] || []
-            );
-            return buildCachePayload(tokenPortfolio, 1000 * 60 * 60 * 5);
+            const tokenPortfolio = await service.getWalletTokenPortfolio(addressInput, networks);
+            return buildCachePayload(tokenPortfolio, expiration);
           },
           {
             forceRefetch: hardRefresh,
@@ -160,6 +108,58 @@ export const useMultichainMagic = () => {
     );
   };
 
+  const fetchMultichainNftPortfolio = async (addressInput: TAddress) => {
+    return newAsyncDispatch(
+      StateEvent.GetNftPortfolio,
+      {
+        onStartEvent: MultichainEvent.GetNftPortfolio.InProgress,
+        onErrorEvent: {
+          value: MultichainEvent.GetNftPortfolio.Idle,
+          toast: 'Failed to fetch NFT portfolio.',
+        },
+        onFinishEvent: {
+          value: MultichainEvent.GetNftPortfolio.Finished,
+          toast: 'Fetched NFT portfolio.',
+        },
+        onResetEvent: MultichainEvent.GetNftPortfolio.Idle,
+      },
+      async () => {
+        const allNftBalances = await service.getMultichainNftCollectibles(
+          addressInput,
+          getNetworks()
+        );
+        setState(nftPortfolio)(allNftBalances);
+
+        const _nftPortfolio = calculateMultichainNFTPortfolio(allNftBalances);
+        // console.log("_nftPortfolio", _nftPortfolio);
+        setState(nftPortfolioStats)(_nftPortfolio);
+      }
+    );
+  };
+
+  const fetchMultichainNftActivity = async (addressInput: TAddress) => {
+    return newAsyncDispatch(
+      StateEvent.GetNftActivity,
+      {
+        onStartEvent: MultichainEvent.GetNftActivity.InProgress,
+        onErrorEvent: {
+          value: MultichainEvent.GetNftActivity.Idle,
+          toast: 'Failed to fetch multichain NFT activities.',
+        },
+        onFinishEvent: {
+          value: MultichainEvent.GetNftActivity.Finished,
+          toast: 'Fetched NFT activities.',
+        },
+        onResetEvent: MultichainEvent.GetNftActivity.Idle,
+      },
+      async () => {
+        const activityData = await service.fetchMultichainNftActivity(addressInput, getNetworks());
+        setState(nftActivity)(activityData.allNftActivities);
+        setState(nftActivityStats)(activityData.nftActivityStats);
+      }
+    );
+  };
+
   const letsDoSomeMagic = async (
     addressInput: TAddress | undefined,
     networks: TChainName[],
@@ -168,21 +168,23 @@ export const useMultichainMagic = () => {
     await newAsyncDispatch(
       StateEvent.GetMultichainData,
       {
-        onStartEvent: MultichainStateSubEvents.GetMultichainData.InProgress,
+        onStartEvent: MultichainEvent.GetMultichainData.InProgress,
         onErrorEvent: {
-          value: MultichainStateSubEvents.GetMultichainData.Idle,
+          value: MultichainEvent.GetMultichainData.Idle,
           toast: 'Failed to fetch multichain data.',
         },
         onFinishEvent: {
-          value: MultichainStateSubEvents.GetMultichainData.Finished,
+          value: MultichainEvent.GetMultichainData.Finished,
           toast: 'Fetched token portfolio.',
         },
-        onResetEvent: MultichainStateSubEvents.GetMultichainData.Idle,
+        onResetEvent: MultichainEvent.GetMultichainData.Idle,
       },
       async () => {
         if (networks.length > 0 && addressInput) {
           await fetchMultichainTokenPortfolio(addressInput, hardRefresh);
           await fetchActivityStats(addressInput);
+          await fetchMultichainNftPortfolio(addressInput);
+          await fetchMultichainNftActivity(addressInput);
           await delayMs(1000);
         }
       }

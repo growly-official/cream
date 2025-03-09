@@ -1,3 +1,4 @@
+import { TNftBalance } from 'chainsmith-sdk/types';
 import { UseState } from '.';
 
 export const mustBeBoolean = (v: any) => !!v;
@@ -23,3 +24,39 @@ export function makeid(length: number) {
   }
   return result;
 }
+
+// TODO: Get price of the currency
+const getNftPrice = (nftBalance: TNftBalance) => {
+  return nftBalance.balance * nftBalance.floorPrice;
+};
+
+export const calculateMultichainNFTPortfolio = (nftBalanceList: TNftBalance[]) => {
+  // Calculate sumPortfolioUSDValue
+  let sumPortfolioUSDValue = 0;
+  for (const nft of nftBalanceList) {
+    sumPortfolioUSDValue += getNftPrice(nft);
+  }
+
+  // Calculate mostValuableNFTCollection
+  const mostValuableNFTCollection =
+    nftBalanceList.length > 0
+      ? nftBalanceList.reduce((prev, current) =>
+          prev && getNftPrice(prev) > getNftPrice(current) ? prev : current
+        )
+      : undefined;
+
+  const chainRecordsWithTokens = {};
+
+  for (const nft of nftBalanceList) {
+    chainRecordsWithTokens[nft.chainId] = {
+      tokens: (chainRecordsWithTokens[nft.chainId]?.tokens || []).concat(nft),
+      totalUSDValue: (chainRecordsWithTokens[nft.chainId]?.totalUSDValue || 0) + getNftPrice(nft),
+    };
+  }
+
+  return {
+    sumPortfolioUSDValue,
+    mostValuableNFTCollection,
+    chainRecordsWithTokens,
+  };
+};

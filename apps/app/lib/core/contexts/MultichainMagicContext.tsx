@@ -6,6 +6,9 @@ import {
   TChainStats,
   TMultichain,
   TMultiEcosystem,
+  TNFTActivityStats,
+  TNftBalance,
+  TNftTransferActivity,
   TTokenPortfolio,
   TTokenPortfolioStats,
   TTokenTransferActivity,
@@ -35,12 +38,34 @@ const defaultTokenPortfolioStats: TTokenPortfolioStats = {
   totalUsdValue: 0,
 };
 
+const defaultNFTActivityStats: TNFTActivityStats = {
+  sumCount: 0,
+  mintCount: 0,
+  buyCount: 0,
+  saleCount: 0,
+  tradeCount: 0,
+};
+
 const defaultChainStats: TChainStats = {
   totalChains: [],
   noActivityChains: [],
   mostActiveChainName: '',
   countUniqueDaysActiveChain: 0,
   countActiveChainTxs: 0,
+};
+
+export type TChainRecordWithNfts = Record<
+  string,
+  {
+    totalUSDValue: number;
+    tokens: TNftBalance[];
+  }
+>;
+
+export type TNFTPortfolioStats = {
+  sumPortfolioUSDValue: number;
+  mostValuableNFTCollection: TNftBalance | undefined;
+  chainRecordsWithTokens: TChainRecordWithNfts;
 };
 
 export enum MultichainAppStage {
@@ -59,12 +84,16 @@ export interface IMultichainMagicContext {
   // Raw
   allTransactions: UseState<TMultichain<TTokenTransferActivity[]>>;
   tokenPortfolio: UseState<TTokenPortfolio>;
+  nftPortfolio: UseState<TNftBalance[]>;
+  nftActivity: UseState<TNftTransferActivity[]>;
 
   // Insights
   chainStats: UseState<TChainStats>;
   activityStats: UseState<TMultichain<TActivityStats>>;
   tokenPortfolioStats: UseState<TTokenPortfolioStats>;
   totalGasInETH: UseState<number>;
+  nftPortfolioStats: UseState<TNFTPortfolioStats>;
+  nftActivityStats: UseState<TNFTActivityStats>;
 }
 
 export const MultichainMagicContext = React.createContext<IMultichainMagicContext>(
@@ -96,6 +125,16 @@ export const MultichainMagicProvider = ({ children }: Props) => {
   });
   const tokenPortfolioStats = useState<TTokenPortfolioStats>(defaultTokenPortfolioStats);
   const totalGasInETH = useState(0);
+  // Multi-chain nft portfolio
+  const nftPortfolio = useState<TNftBalance[]>([]);
+  const nftPortfolioStats = useState<TNFTPortfolioStats>({
+    chainRecordsWithTokens: {},
+    mostValuableNFTCollection: undefined,
+    sumPortfolioUSDValue: 0,
+  });
+
+  const nftActivity = useState<TNftTransferActivity[]>([]);
+  const nftActivityStats = useState<TNFTActivityStats>(defaultNFTActivityStats);
 
   return (
     <MultichainMagicContext.Provider
@@ -109,11 +148,15 @@ export const MultichainMagicProvider = ({ children }: Props) => {
         tokenPortfolio,
         tokenPortfolioStats,
         allTransactions,
+        nftPortfolio,
+        nftActivity,
 
         // Insight
         activityStats,
         chainStats,
         totalGasInETH,
+        nftPortfolioStats,
+        nftActivityStats,
       }}>
       {children}
     </MultichainMagicContext.Provider>

@@ -1,9 +1,8 @@
-import { calculateGasInETH, calculateMultichainTokenPortfolio } from 'chainsmith-sdk/utils';
+import { calculateMultichainTokenPortfolio } from 'chainsmith-sdk/utils';
 import { delayMs, setState } from '../../utils';
 import { BinaryState, StateEvent, ThreeStageState } from '../../types/state.type';
 import { useNativeMagicContext } from './useNativeMagicContext';
-import { TActivityStats, TAddress, TChainStats } from 'chainsmith-sdk/types';
-import { calculateEVMStreaksAndMetrics } from 'chainsmith-sdk/adapters';
+import { TAddress } from 'chainsmith-sdk/types';
 import { SonicChainApiService } from '../../services';
 import { buildCachePayload, getRevalidatedJsonData } from '../../helpers';
 import { useAsyncDispatch } from '..';
@@ -25,73 +24,16 @@ export const useNativeMagic = () => {
     stateEvents,
     setStateEvents,
     // Raw
-    allTransactions,
     tokenPortfolio,
     sonicPoints,
 
     // Insights
-    chainStats,
-    activityStats,
     tokenPortfolioStats,
-    totalGasInETH,
   } = useNativeMagicContext();
   const { newAsyncDispatch, stateCheck, dispatchStateEvent } = useAsyncDispatch(
     NativeStateSubEvents,
     [stateEvents, setStateEvents]
   );
-
-  const fetchActivityStats = async (addressInput: TAddress) => {
-    return newAsyncDispatch(
-      StateEvent.ActivityStats,
-      {
-        onStartEvent: NativeStateSubEvents.ActivityStats.InProgress,
-        onErrorEvent: { value: NativeStateSubEvents.ActivityStats.Idle },
-        onFinishEvent: {
-          value: NativeStateSubEvents.ActivityStats.Finished,
-          toast: 'Activity stats fetched.',
-        },
-        onResetEvent: NativeStateSubEvents.ActivityStats.Idle,
-      },
-      async () => {
-        const txs = await service.listTokenTransferActivities(addressInput);
-        setState(allTransactions)(txs);
-
-        const filteredTransactions = Object.values(txs)
-          .flat()
-          .filter(tx => tx.from.toLowerCase() === addressInput.toLowerCase());
-        const _totalGasInETH = filteredTransactions.reduce(
-          (acc, curr) =>
-            acc + calculateGasInETH(Number.parseInt(curr.gasUsed), Number.parseInt(curr.gasPrice)),
-          0
-        );
-
-        setState(totalGasInETH)(_totalGasInETH);
-
-        const _countActiveChainTxs = txs?.length || 0;
-
-        // Get Activity Stats
-        let stats: TActivityStats | undefined = undefined;
-        if (txs?.length || 0 > 0) {
-          stats = calculateEVMStreaksAndMetrics(txs || [], addressInput);
-          setState(activityStats)(stats);
-        }
-
-        // Get unique active day, on most active chain 🫠
-        const { uniqueActiveDays } = calculateEVMStreaksAndMetrics(txs || [], addressInput);
-
-        const _chainStats: TChainStats = {
-          totalChains: [],
-          mostActiveChainName: 'sonic',
-          noActivityChains: [],
-          countUniqueDaysActiveChain: uniqueActiveDays,
-          countActiveChainTxs: _countActiveChainTxs,
-        };
-        setState(chainStats)(_chainStats);
-
-        return stats;
-      }
-    );
-  };
 
   const fetchTokenPortfolio = async (addressInput: TAddress, hardRefresh?: boolean) => {
     return newAsyncDispatch(
@@ -155,7 +97,6 @@ export const useNativeMagic = () => {
       if (addressInput) {
         await fetchTokenPortfolio(addressInput, hardRefresh);
         await fetchPoints(addressInput);
-        await fetchActivityStats(addressInput);
         await delayMs(1000);
       }
     } catch (error) {
@@ -165,7 +106,6 @@ export const useNativeMagic = () => {
 
   return {
     query: {
-      fetchActivityStats,
       fetchTokenPortfolio,
       stateCheck,
     },

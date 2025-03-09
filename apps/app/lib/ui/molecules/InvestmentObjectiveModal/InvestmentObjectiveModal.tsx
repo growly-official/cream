@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Modal, Button } from '../../atoms';
 import clsx from 'clsx';
 import { storeJsonCacheData, buildCachePayload, INVESTMENT_OBJECTIVES } from '@/core';
+import { useAccount } from 'wagmi';
 
 type Props = {
   open: boolean;
@@ -9,6 +10,7 @@ type Props = {
 };
 
 const InvestmentObjectiveModal = ({ open, handleOpen }: Props) => {
+  const { address } = useAccount();
   const [steps, setSteps] = useState(0);
   const [stepValues, setStepValues] = useState({
     0: 'Daily',
@@ -117,10 +119,8 @@ const InvestmentObjectiveModal = ({ open, handleOpen }: Props) => {
             <Button
               onClick={() => {
                 handleOpen(false);
-                storeJsonCacheData(
-                  INVESTMENT_OBJECTIVES,
-                  buildCachePayload(stepValues, 1000 * 60 * 60 * 24 * 365)
-                );
+                const [key, expiration] = INVESTMENT_OBJECTIVES(address);
+                storeJsonCacheData(key, buildCachePayload(stepValues, expiration));
               }}
               className="mt-5 bg-orange-200 hover:bg-orange-600 hover:text-white rounded-xl w-full">
               Submit Investment Objectives

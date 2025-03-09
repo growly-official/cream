@@ -4,6 +4,7 @@ import {
   TChainName,
   TMultichain,
   TNftBalance,
+  TNftTransferActivity,
   TTokenPortfolio,
   TTokenTransferActivity,
 } from 'chainsmith-sdk/types';
@@ -27,6 +28,15 @@ export class EvmChainService {
     chainNames: TChainName[]
   ): Promise<TMultichain<TTokenTransferActivity[]>> {
     return chainsmithSdk(chainNames).token.listMultichainTokenTransferActivities(
+      AdapterRegistry.Evmscan
+    )(walletAddress);
+  }
+
+  async listMultichainNftTransferActivities(
+    walletAddress: TAddress,
+    chainNames: TChainName[]
+  ): Promise<TMultichain<TNftTransferActivity[]>> {
+    return chainsmithSdk(chainNames).token.listMultichainNftTransferActivities(
       AdapterRegistry.Evmscan
     )(walletAddress);
   }

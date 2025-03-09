@@ -96,9 +96,19 @@ export class SonicController {
     return AdapterRegistry.MetropolisApi.getV21Pools();
   }
 
-  @Post('/metropolis/stats')
+  @Get('/metropolis/stats')
   async getMetropolisProtocolStatistics(): Promise<TMetropolisAggregatedInfo> {
     return AdapterRegistry.MetropolisApi.getProtocolStatistics();
+  }
+
+  @Get('/metropolis/vaults')
+  async getMetropolisVaults(): Promise<TMetropolisVault[]> {
+    return AdapterRegistry.MetropolisApi.getVaults(getChainIdByName('sonic'));
+  }
+
+  @Get('/angles/market')
+  async getAngles(): Promise<TAnglesMarket> {
+    return AdapterRegistry.AnglesApi.getAnglesMarket();
   }
 
   @Post('/metropolis/stats')
@@ -106,15 +116,5 @@ export class SonicController {
     @Body() payload: { walletAddress: TAddress }
   ): Promise<TMetropolisVaultPosition[]> {
     return AdapterRegistry.MetropolisApi.getUserVaultPositions(payload.walletAddress);
-  }
-
-  @Post('/metropolis/vaults')
-  async getMetropolisVaults(): Promise<TMetropolisVault[]> {
-    return AdapterRegistry.MetropolisApi.getVaults(getChainIdByName('sonic'));
-  }
-
-  @Post('/angles/market')
-  async getAngles(): Promise<TAnglesMarket> {
-    return AdapterRegistry.AnglesApi.getAnglesMarket();
   }
 }

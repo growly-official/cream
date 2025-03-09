@@ -7,29 +7,27 @@ import type {
   TMultichain,
   TTokenPortfolio,
   TNftBalance,
+  TLongestHoldingToken,
+  TChainStats,
+  TActivityStats,
+  TNftTransferActivity,
+  TNFTActivityStats,
 } from 'chainsmith-sdk/types';
+import { OnchainBusterService } from '../onchain-buster/onchain-buster.service.ts';
 
 @Controller('/evm')
 export class EvmController {
-  constructor(@Inject(EvmChainService) private readonly service: EvmChainService) {}
+  constructor(
+    @Inject(EvmChainService) private readonly evmChainService: EvmChainService,
+    @Inject(OnchainBusterService) private readonly onchainBusterService: OnchainBusterService
+  ) {}
 
   @Post('/portfolio')
   async getWalletTokenPortfolio(
     @Body() payload: { walletAddress: TAddress; chainNames: TChainName[] }
   ): Promise<TTokenPortfolio> {
     if (payload.chainNames.length === 0) throw new Error('No chain provided');
-    return this.service.getWalletTokenPortfolio(payload.walletAddress, payload.chainNames);
-  }
-
-  @Post('/activity')
-  async listMultichainTokenTransferActivities(
-    @Body() payload: { walletAddress: TAddress; chainNames: TChainName[] }
-  ): Promise<TMultichain<TTokenTransferActivity[]>> {
-    if (payload.chainNames.length === 0) throw new Error('No chain provided');
-    return this.service.listMultichainTokenTransferActivities(
-      payload.walletAddress,
-      payload.chainNames
-    );
+    return this.evmChainService.getWalletTokenPortfolio(payload.walletAddress, payload.chainNames);
   }
 
   @Post('/nfts')
@@ -37,6 +35,48 @@ export class EvmController {
     @Body() payload: { walletAddress: TAddress; chainNames: TChainName[] }
   ): Promise<TMultichain<TNftBalance[]>> {
     if (payload.chainNames.length === 0) throw new Error('No chain provided');
-    return this.service.getMultichainNftCollectibles(payload.walletAddress, payload.chainNames);
+    return this.evmChainService.getMultichainNftCollectibles(
+      payload.walletAddress,
+      payload.chainNames
+    );
+  }
+
+  @Post('/nfts/activity')
+  async fetchMultichainNftActivity(
+    @Body() payload: { walletAddress: TAddress; chainNames: TChainName[] }
+  ): Promise<{
+    allNftActivities: TNftTransferActivity[];
+    nftActivityStats: TNFTActivityStats;
+  }> {
+    if (payload.chainNames.length === 0) throw new Error('No chain provided');
+    return this.onchainBusterService.fetchMultichainNftActivity(
+      payload.walletAddress,
+      payload.chainNames
+    );
+  }
+
+  @Post('/token/activity')
+  async listMultichainTokenTransferActivities(
+    @Body() payload: { walletAddress: TAddress; chainNames: TChainName[] }
+  ): Promise<TMultichain<TTokenTransferActivity[]>> {
+    if (payload.chainNames.length === 0) throw new Error('No chain provided');
+    return this.evmChainService.listMultichainTokenTransferActivities(
+      payload.walletAddress,
+      payload.chainNames
+    );
+  }
+
+  @Post('/activity-stats')
+  async fetchActivityStats(
+    @Body() payload: { walletAddress: TAddress; chainNames: TChainName[] }
+  ): Promise<{
+    longestHoldingTokenByChain: TLongestHoldingToken[];
+    multichainTxs: TMultichain<TTokenTransferActivity[]>;
+    chainStats: TChainStats;
+    totalGasInETH: number;
+    activityStats: TMultichain<TActivityStats>;
+  }> {
+    if (payload.chainNames.length === 0) throw new Error('No chain provided');
+    return this.onchainBusterService.fetchActivityStats(payload.walletAddress, payload.chainNames);
   }
 }

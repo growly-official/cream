@@ -1,6 +1,6 @@
 import { Chains } from 'chainsmith-sdk/data';
 import { GetChainRpcEndpoint } from 'chainsmith-sdk/rpc';
-import { getChainDefultRpcUrl } from 'chainsmith-sdk/utils';
+import { getChainDefaultRpcUrl } from 'chainsmith-sdk/utils';
 
 function alchemyRpcUrl(chainId: string) {
   return `https://${chainId}.g.alchemy.com`;
@@ -19,6 +19,6 @@ const ALCHEMY_CHAIN_ENDPOINT = {
 
 export const alchemy: (apiKey: string) => GetChainRpcEndpoint = (apiKey: string) => chain => {
   const endpoint = (ALCHEMY_CHAIN_ENDPOINT as any)[chain.id];
-  if (!endpoint) return getChainDefultRpcUrl(chain) || '';
+  if (!endpoint) return getChainDefaultRpcUrl(chain) || '';
   return `${endpoint}/v2/${apiKey}`;
 };

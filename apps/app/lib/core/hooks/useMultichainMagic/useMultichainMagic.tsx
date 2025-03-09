@@ -9,10 +9,12 @@ import {
   TChainStats,
   TMultichain,
 } from 'chainsmith-sdk/types';
-import { calculateEVMStreaksAndMetrics } from 'chainsmith-sdk/adapters';
+import { calculateEVMStreaksAndMetrics } from 'chainsmith-sdk/utils';
 import { EvmApiService } from '../../services';
 import { buildCachePayload, getRevalidatedJsonData } from '../../helpers';
 import { useAsyncDispatch } from '..';
+
+const service = new EvmApiService();
 
 export const MultichainStateSubEvents = {
   [StateEvent.ActivityStats]: ThreeStageState,
@@ -58,7 +60,7 @@ export const useMultichainMagic = () => {
         onResetEvent: MultichainStateSubEvents.ActivityStats.Idle,
       },
       async () => {
-        const multichainTxs = await new EvmApiService().listMultichainTokenTransferActivities(
+        const multichainTxs = await service.listMultichainTokenTransferActivities(
           addressInput,
           selectState(selectedNetworks)['evm'] || []
         );
@@ -139,7 +141,7 @@ export const useMultichainMagic = () => {
         const cachedTokenPortfolio = await getRevalidatedJsonData(
           `${addressInput}.multichainTokenPortfolio`,
           async () => {
-            const tokenPortfolio = await new EvmApiService().getWalletTokenPortfolio(
+            const tokenPortfolio = await service.getWalletTokenPortfolio(
               addressInput,
               selectState(selectedNetworks)['evm'] || []
             );

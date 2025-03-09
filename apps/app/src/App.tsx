@@ -16,7 +16,7 @@ function App() {
   return (
     <Providers>
       <Theme grayColor="gray" radius="large">
-        <main className={`w-full max-h-[100vh] overflow-hidden`}>
+        <main className={`w-full max-h-[100vh]`}>
           <FetchingStatusOverlay />
           <AnimatedBackground />
           <div className="px-3 py-5">

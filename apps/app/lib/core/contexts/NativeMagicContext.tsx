@@ -4,6 +4,7 @@ import {
   TActivityStats,
   TChainName,
   TChainStats,
+  TNftBalance,
   TTokenPortfolio,
   TTokenPortfolioStats,
   TTokenTransferActivity,
@@ -66,6 +67,7 @@ export interface INativeMagicContext {
   currentNativeChain: UseState<TChainName>;
   allTransactions: UseState<TTokenTransferActivity[]>;
   tokenPortfolio: UseState<TTokenPortfolio>;
+  nftPortfolio: UseState<TNftBalance[]>;
 
   // Insights
   chainStats: UseState<TChainStats>;
@@ -101,6 +103,8 @@ export const NativeMagicProvider = ({ children }: Props) => {
   const tokenPortfolioStats = useState<TTokenPortfolioStats>(defaultTokenPortfolioStats);
   const totalGasInETH = useState(0);
 
+  const nftPortfolio = useState<TNftBalance[]>([]);
+
   return (
     <NativeMagicContext.Provider
       value={{
@@ -114,6 +118,7 @@ export const NativeMagicProvider = ({ children }: Props) => {
         tokenPortfolio,
         tokenPortfolioStats,
         allTransactions,
+        nftPortfolio,
 
         // Insight
         activityStats,

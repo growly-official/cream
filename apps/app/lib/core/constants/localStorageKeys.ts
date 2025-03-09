@@ -31,6 +31,20 @@ export const MULTICHAIN_NFT_ACTIVITY_DATA = (addressInput: TAddress): LocalStora
   HOUR * 24 * 30,
 ];
 
+export const NATIVE_TOKEN_PORTFOLIO = (
+  addressInput: TAddress | undefined
+): LocalStorageCacheKey => [`${addressInput}.tokenPortfolio`, HOUR / 2];
+
+export const NATIVE_POINTS = (addressInput: TAddress | undefined): LocalStorageCacheKey => [
+  `${addressInput}.points`,
+  HOUR * 3,
+];
+
+export const NATIVE_NFT_PORTFOLIO = (addressInput: TAddress | undefined): LocalStorageCacheKey => [
+  `${addressInput}.nftPortfolio`,
+  HOUR / 2,
+];
+
 export const SELECTED_NETWORKS = (addressInput: TAddress | undefined): LocalStorageCacheKey => [
   `${addressInput}.selectedNetworks`,
   HOUR * 24 * 10,

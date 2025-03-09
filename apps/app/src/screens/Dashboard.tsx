@@ -24,16 +24,15 @@ import { CREAM_COLORS } from '../constants';
 
 const Dashboard: React.FC<any> = () => {
   useNativeMagicInit();
+  const { address } = useAccount();
   const {
     query: { stateCheck },
     mutate: { letsDoSomeMagic },
   } = useNativeMagic();
-  const { address } = useAccount();
-  const { tokenPortfolio, sonicPoints } = useNativeMagicContext();
+  const [key] = INVESTMENT_OBJECTIVES(address);
+  const { tokenPortfolio, sonicPoints, nftPortfolio } = useNativeMagicContext();
   const [chatWithAiMessage, setChatWithAiMessage] = useState('');
-  const [openObjectiveModal, setOpenObjectiveModal] = useState(
-    !getJsonCacheData(INVESTMENT_OBJECTIVES)
-  );
+  const [openObjectiveModal, setOpenObjectiveModal] = useState(!getJsonCacheData(key));
 
   return (
     <React.Fragment>
@@ -80,6 +79,38 @@ const Dashboard: React.FC<any> = () => {
                   </Badge>
                 </div>
               </div>
+            </div>
+            <div className="flex gap-2">
+              {(selectState(sonicPoints)?.ecosystem_points || 0) < 20000 && (
+                <div className="flex items-center">
+                  <img src="badges/newbie-badge.png" width={100} />
+                  <h1 className="font-bold">Newbie</h1>
+                </div>
+              )}
+              {(selectState(sonicPoints)?.passive_liquidity_points || 0) > 100000 && (
+                <div className="flex items-center">
+                  <img src="badges/defichad-badge.png" width={100} />
+                  <h1 className="font-bold">DeFi Chad</h1>
+                </div>
+              )}
+              {(selectState(sonicPoints)?.active_liquidity_points || 0) > 100000 && (
+                <div className="flex items-center">
+                  <img src="badges/degen-badge.png" width={100} />
+                  <h1 className="font-bold">Degen</h1>
+                </div>
+              )}
+              {(selectState(sonicPoints)?.rank || 0) < 1000 && (
+                <div className="flex items-center">
+                  <img src="badges/og-badge.png" width={100} />
+                  <h1 className="font-bold">OG</h1>
+                </div>
+              )}
+              {selectState(nftPortfolio).length > 10 && (
+                <div className="flex items-center">
+                  <img src="badges/nftenthusiast-badge.png" width={100} />
+                  <h1 className="font-bold">NFT Enthusiast</h1>
+                </div>
+              )}
             </div>
           </div>
         </div>

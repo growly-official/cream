@@ -10,6 +10,7 @@ import { GettingStarted, Chat } from './screens';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import FetchingStatusOverlay from './components/FetchingStatusOverlay';
 import { AppBar } from './components/AppBar';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               </BrowserRouter>
             </div>
           </div>
+          <ToastContainer />
         </main>
       </Theme>
     </Providers>

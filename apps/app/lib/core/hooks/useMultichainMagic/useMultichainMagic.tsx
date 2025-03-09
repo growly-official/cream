@@ -1,13 +1,6 @@
 import { calculateGasInETH, calculateMultichainTokenPortfolio } from 'chainsmith-sdk/utils';
-import { toast } from 'react-toastify';
 import { delayMs, selectState, setState } from '../../utils';
-import {
-  BinaryState,
-  StateEvent,
-  StateOption,
-  ThreeStageState,
-  Toastable,
-} from '../../types/state.type';
+import { BinaryState, StateEvent, ThreeStageState } from '../../types/state.type';
 import { useMultichainMagicContext } from './useMultichainMagicContext';
 import {
   TActivityStats,
@@ -19,6 +12,7 @@ import {
 import { calculateEVMStreaksAndMetrics } from 'chainsmith-sdk/adapters';
 import { EvmApiService } from '../../services';
 import { buildCachePayload, getRevalidatedJsonData } from '../../helpers';
+import { useAsyncDispatch } from '..';
 
 export const MultichainStateSubEvents = {
   [StateEvent.ActivityStats]: ThreeStageState,
@@ -32,7 +26,6 @@ export const MultichainStateSubEvents = {
 };
 
 export const useMultichainMagic = () => {
-  const magicContext = useMultichainMagicContext();
   const {
     stateEvents,
     setStateEvents,
@@ -46,49 +39,11 @@ export const useMultichainMagic = () => {
     activityStats,
     tokenPortfolioStats,
     totalGasInETH,
-  } = magicContext;
-
-  const dispatchStateEvent = (eventName: StateEvent, status: StateOption) => {
-    setStateEvents(stateEvents => ({ ...stateEvents, [eventName]: status }));
-  };
-
-  const stateCheck = (event: keyof typeof StateEvent, option: StateOption): boolean => {
-    return stateEvents[event] === (MultichainStateSubEvents[event] as any)[option];
-  };
-
-  async function newAsyncDispatch<Output>(
-    eventName: StateEvent,
-    eventHooks: {
-      onStartEvent: StateOption;
-      onFinishEvent: Toastable<StateOption>;
-      onErrorEvent: Toastable<StateOption>;
-      onResetEvent: StateOption;
-    },
-    method: () => Promise<Output>
-  ): Promise<Output> {
-    dispatchStateEvent(eventName, eventHooks.onResetEvent);
-    dispatchStateEvent(eventName, eventHooks.onStartEvent);
-    try {
-      const data = await method();
-      const event = eventHooks.onFinishEvent;
-      dispatchStateEvent(eventName, event.value);
-      if (event.toast) {
-        toast(event.toast, {
-          type: 'success',
-        });
-      }
-      return data;
-    } catch (error: any) {
-      const event = eventHooks.onErrorEvent;
-      dispatchStateEvent(eventName, event.value);
-      if (event.toast) {
-        toast(`${event.toast} - Error: ${error.message}`, {
-          type: 'error',
-        });
-      }
-      throw new Error(`${eventName} : ${error.message}`);
-    }
-  }
+  } = useMultichainMagicContext();
+  const { newAsyncDispatch, stateCheck, dispatchStateEvent } = useAsyncDispatch(
+    MultichainStateSubEvents,
+    [stateEvents, setStateEvents]
+  );
 
   const fetchActivityStats = async (addressInput: TAddress) => {
     return newAsyncDispatch(
@@ -214,7 +169,7 @@ export const useMultichainMagic = () => {
         onStartEvent: MultichainStateSubEvents.GetMultichainData.InProgress,
         onErrorEvent: {
           value: MultichainStateSubEvents.GetMultichainData.Idle,
-          toast: 'Failed to fetch multichain token portfolio.',
+          toast: 'Failed to fetch multichain data.',
         },
         onFinishEvent: {
           value: MultichainStateSubEvents.GetMultichainData.Finished,
@@ -223,14 +178,10 @@ export const useMultichainMagic = () => {
         onResetEvent: MultichainStateSubEvents.GetMultichainData.Idle,
       },
       async () => {
-        try {
-          if (networks.length > 0 && addressInput) {
-            await fetchMultichainTokenPortfolio(addressInput, hardRefresh);
-            await fetchActivityStats(addressInput);
-            await delayMs(1000);
-          }
-        } catch (error) {
-          console.log(error);
+        if (networks.length > 0 && addressInput) {
+          await fetchMultichainTokenPortfolio(addressInput, hardRefresh);
+          await fetchActivityStats(addressInput);
+          await delayMs(1000);
         }
       }
     );

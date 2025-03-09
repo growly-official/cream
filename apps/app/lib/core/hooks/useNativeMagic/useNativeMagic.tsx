@@ -1,18 +1,12 @@
 import { calculateGasInETH, calculateMultichainTokenPortfolio } from 'chainsmith-sdk/utils';
-import { toast } from 'react-toastify';
 import { delayMs, setState } from '../../utils';
-import {
-  BinaryState,
-  StateEvent,
-  StateOption,
-  ThreeStageState,
-  Toastable,
-} from '../../types/state.type';
+import { BinaryState, StateEvent, ThreeStageState } from '../../types/state.type';
 import { useNativeMagicContext } from './useNativeMagicContext';
 import { TActivityStats, TAddress, TChainStats } from 'chainsmith-sdk/types';
 import { calculateEVMStreaksAndMetrics } from 'chainsmith-sdk/adapters';
 import { SonicChainApiService } from '../../services';
 import { buildCachePayload, getRevalidatedJsonData } from '../../helpers';
+import { useAsyncDispatch } from '..';
 
 export const NativeStateSubEvents = {
   [StateEvent.ActivityStats]: ThreeStageState,
@@ -41,48 +35,10 @@ export const useNativeMagic = () => {
     tokenPortfolioStats,
     totalGasInETH,
   } = useNativeMagicContext();
-
-  const dispatchStateEvent = (eventName: StateEvent, status: StateOption) => {
-    setStateEvents(stateEvents => ({ ...stateEvents, [eventName]: status }));
-  };
-
-  const stateCheck = (event: keyof typeof StateEvent, option: StateOption): boolean => {
-    return stateEvents[event] === (NativeStateSubEvents[event] as any)[option];
-  };
-
-  async function newAsyncDispatch<Output>(
-    eventName: StateEvent,
-    eventHooks: {
-      onStartEvent: StateOption;
-      onFinishEvent: Toastable<StateOption>;
-      onErrorEvent: Toastable<StateOption>;
-      onResetEvent: StateOption;
-    },
-    method: () => Promise<Output>
-  ): Promise<Output> {
-    dispatchStateEvent(eventName, eventHooks.onResetEvent);
-    dispatchStateEvent(eventName, eventHooks.onStartEvent);
-    try {
-      const data = await method();
-      const event = eventHooks.onFinishEvent;
-      dispatchStateEvent(eventName, event.value);
-      if (event.toast) {
-        toast(event.toast, {
-          type: 'success',
-        });
-      }
-      return data;
-    } catch (error: any) {
-      const event = eventHooks.onErrorEvent;
-      dispatchStateEvent(eventName, event.value);
-      if (event.toast) {
-        toast(`${event.toast} - Error: ${error.message}`, {
-          type: 'error',
-        });
-      }
-      throw new Error(`${eventName} : ${error.message}`);
-    }
-  }
+  const { newAsyncDispatch, stateCheck, dispatchStateEvent } = useAsyncDispatch(
+    NativeStateSubEvents,
+    [stateEvents, setStateEvents]
+  );
 
   const fetchActivityStats = async (addressInput: TAddress) => {
     return newAsyncDispatch(

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Modal, Button } from '../../atoms';
 import clsx from 'clsx';
-import { storeJsonCacheData, buildCachePayload } from '@/core';
+import { storeJsonCacheData, buildCachePayload, INVESTMENT_OBJECTIVES } from '@/core';
 
 type Props = {
   open: boolean;
@@ -118,7 +118,7 @@ const InvestmentObjectiveModal = ({ open, handleOpen }: Props) => {
               onClick={() => {
                 handleOpen(false);
                 storeJsonCacheData(
-                  'investmentObjectives',
+                  INVESTMENT_OBJECTIVES,
                   buildCachePayload(stepValues, 1000 * 60 * 60 * 24 * 365)
                 );
               }}

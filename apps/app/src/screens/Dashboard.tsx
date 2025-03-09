@@ -6,6 +6,7 @@ import {
   useNativeMagic,
   useNativeMagicInit,
   formatNumberCompact,
+  INVESTMENT_OBJECTIVES,
 } from '@/core';
 import { Atoms, Molecules } from '@/ui';
 import { ThreeStageState } from '@/core';
@@ -31,7 +32,7 @@ const Dashboard: React.FC<any> = () => {
   const { tokenPortfolio, sonicPoints } = useNativeMagicContext();
   const [chatWithAiMessage, setChatWithAiMessage] = useState('');
   const [openObjectiveModal, setOpenObjectiveModal] = useState(
-    !getJsonCacheData('investmentObjectives')
+    !getJsonCacheData(INVESTMENT_OBJECTIVES)
   );
 
   return (

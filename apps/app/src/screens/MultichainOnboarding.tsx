@@ -1,19 +1,33 @@
 import { countExistentialObject, filterObject, getChainByName } from 'chainsmith-sdk/utils';
-import { BackgroundChains } from '../../lib/core/chainsmith';
-import { ChainIcon } from '../../lib/ui/molecules';
+import {
+  BackgroundChains,
+  SELECTED_NETWORKS_EXPIRATION,
+  getJsonCacheData,
+  useMultichainMagic,
+} from '@/core';
+import { Atoms, Molecules } from '@/ui';
 import { useState } from 'react';
 import { TMultichain } from 'chainsmith-sdk/types';
 import clsx from 'clsx';
-import { Button } from '../../lib/ui/atoms';
-import { useMultichainMagic } from '../../lib/core/hooks';
 import { useAccount } from 'wagmi';
+import { buildCachePayload, storeJsonCacheData, SELECTED_NETWORKS } from '@/core';
 
 const MultichainOnboarding = () => {
   const { address } = useAccount();
   const {
     mutate: { letsDoSomeMagic },
   } = useMultichainMagic();
-  const [currentSelectedNetworks, setCurrentSelectedNetworks] = useState<TMultichain<boolean>>({});
+  const [currentSelectedNetworks, setCurrentSelectedNetworks] = useState<TMultichain<boolean>>(
+    getJsonCacheData(SELECTED_NETWORKS)?.data || {}
+  );
+
+  const handleSelectNetworks = async () => {
+    storeJsonCacheData(
+      SELECTED_NETWORKS,
+      buildCachePayload(currentSelectedNetworks, SELECTED_NETWORKS_EXPIRATION)
+    );
+    await letsDoSomeMagic(address, filterObject(currentSelectedNetworks, item => !!item) as any);
+  };
 
   return (
     <div className="h-[100vh] flex flex-col items-center">
@@ -22,15 +36,13 @@ const MultichainOnboarding = () => {
         You selected {countExistentialObject(currentSelectedNetworks)} networks
       </p>
       {countExistentialObject(currentSelectedNetworks) > 0 && (
-        <Button
-          onClick={() => {
-            letsDoSomeMagic(address, filterObject(currentSelectedNetworks, item => !!item) as any);
-          }}
+        <Atoms.Button
+          onClick={handleSelectNetworks}
           className="mt-5 shadow-xl"
           variant="solid"
           color="orange">
           👉 Start your journey on Cream!
-        </Button>
+        </Atoms.Button>
       )}
       <div className="flex flex-wrap max-w-[800px] items-center justify-center gap-5 mt-10">
         {BackgroundChains.map(chain => (
@@ -45,7 +57,7 @@ const MultichainOnboarding = () => {
               'bg-white hover:font-bold shadow-md flex gap-3 rounded-xl rounded-xl py-5 px-7 hover:scale-110 cursor-pointer',
               currentSelectedNetworks[chain] && 'border font-bold border-slate-800'
             )}>
-            <ChainIcon chainName={chain} /> {getChainByName(chain).name}
+            <Molecules.ChainIcon chainName={chain} /> {getChainByName(chain).name}
           </div>
         ))}
       </div>

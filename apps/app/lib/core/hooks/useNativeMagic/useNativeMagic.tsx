@@ -31,6 +31,7 @@ export const useNativeMagic = () => {
 
     // Insights
     tokenPortfolioStats,
+    nativeProtocolData,
   } = useNativeMagicContext();
   const { newAsyncDispatch, stateCheck, dispatchStateEvent } = useAsyncDispatch(
     NativeStateSubEvents,
@@ -138,9 +139,25 @@ export const useNativeMagic = () => {
     }
   };
 
+  const fetchProtocolData = async () => {
+    setState(nativeProtocolData)({
+      anglesMarketData: await service.getAngles(),
+      beetsPools: await service.getBeetsPools(),
+      metropolisProtocolStatistics: await service.getMetropolisProtocolStatistics(),
+      metropolisVaults: await service.getMetropolisVaults(),
+      shadowMixedPairs: await service.getShadowMixedPairs(),
+      shadowStatistics: await service.getShadowStatistics(),
+      siloMarkets: await service.getSiloMarkets(),
+      siloMetrics: await service.getSiloMetrics(),
+      stakedSonicMarket: await service.getStakedSonicMarket(),
+      metropolisPools: await service.getV21Pools(),
+    });
+  };
+
   return {
     query: {
       fetchTokenPortfolio,
+      fetchProtocolData,
       stateCheck,
     },
     mutate: {

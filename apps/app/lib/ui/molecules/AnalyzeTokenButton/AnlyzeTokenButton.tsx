@@ -38,7 +38,7 @@ const AnalyzeTokenButton = ({
         {...buttonProps}
         onClick={async () => {
           const response = await agentService.sendMessage(
-            'f8b5e449-301b-0502-bc57-9569416b1046',
+            'd1e2abc1-8a8b-008f-a204-71e42c72adf3',
             prompt
           );
           console.log(response);

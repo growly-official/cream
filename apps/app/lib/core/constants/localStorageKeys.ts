@@ -45,6 +45,11 @@ export const NATIVE_NFT_PORTFOLIO = (addressInput: TAddress | undefined): LocalS
   HOUR / 2,
 ];
 
+export const NATIVE_DAPP_PROTOCOL = (addressInput: TAddress | undefined): LocalStorageCacheKey => [
+  `${addressInput}.dappProtocol`,
+  HOUR * 10,
+];
+
 export const SELECTED_NETWORKS = (addressInput: TAddress | undefined): LocalStorageCacheKey => [
   `${addressInput}.selectedNetworks`,
   HOUR * 24 * 10,

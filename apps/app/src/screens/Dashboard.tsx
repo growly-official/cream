@@ -17,7 +17,7 @@ import Lottie from 'react-lottie';
 import Countup from 'react-countup';
 import { Badge, TextField } from '@radix-ui/themes';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
-import { ArrowRightLeftIcon, RefreshCwIcon } from 'lucide-react';
+import { ArrowRightLeftIcon, EarthIcon, RefreshCwIcon } from 'lucide-react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { TAddress } from 'chainsmith-sdk/types';
@@ -109,7 +109,7 @@ const Dashboard: React.FC<any> = () => {
               </div>
             </div>
             <div className="flex gap-2">
-              {(selectState(sonicPoints)?.ecosystem_points || 0) < 20000 && (
+              {(selectState(sonicPoints)?.ecosystem_points || 0) < 100000 && (
                 <div className="flex items-center">
                   <img src="badges/newbie-badge.png" width={100} />
                   <h1 className="font-bold">Newbie</h1>
@@ -212,6 +212,9 @@ const Dashboard: React.FC<any> = () => {
                   <Molecules.SwapButton type="SWAP" tooltipContent="Cross-chain swapping tokens">
                     <ArrowRightLeftIcon size={10} /> Rebalance Portfolio
                   </Molecules.SwapButton>
+                  <Molecules.DiscoverProtocolButton tooltipContent="Discover Protocols">
+                    <EarthIcon size={10} /> Discover Protocols
+                  </Molecules.DiscoverProtocolButton>
                 </div>
                 <div className="mt-10 overflow-scroll max-h-[700px] pb-[15rem]">
                   {address &&

@@ -11,6 +11,18 @@ import {
 } from 'chainsmith-sdk/types';
 import { SetState, StateEventRegistry, UseState } from '../types';
 import { TSonicUserPointsStats } from 'chainsmith-sdk/plugins';
+import {
+  TAnglesMarket,
+  TBeetsPool,
+  TBeetsStakedSonicMarket,
+  TMetropolisAggregatedInfo,
+  TMetropolisV21Pool,
+  TMetropolisVault,
+  TShadowEpochData,
+  TShadowMixedPairs,
+  TSiloMarket,
+  TSiloMetrics,
+} from 'chainsmith-sdk/adapters';
 
 const defaultActivityStats: TActivityStats = {
   totalTxs: 0,
@@ -56,6 +68,19 @@ export enum NativeAppStage {
   GetBased = 1,
 }
 
+export type TNativeProtocolData = {
+  anglesMarketData: TAnglesMarket;
+  beetsPools: TBeetsPool[];
+  metropolisProtocolStatistics: TMetropolisAggregatedInfo;
+  metropolisVaults: TMetropolisVault[];
+  shadowMixedPairs: TShadowMixedPairs;
+  shadowStatistics: TShadowEpochData;
+  siloMarkets: TSiloMarket[];
+  siloMetrics: TSiloMetrics;
+  stakedSonicMarket: TBeetsStakedSonicMarket;
+  metropolisPools: TMetropolisV21Pool[];
+};
+
 export interface INativeMagicContext {
   appStage: UseState<NativeAppStage>;
   stateEvents: StateEventRegistry;
@@ -70,6 +95,7 @@ export interface INativeMagicContext {
   nftPortfolio: UseState<TNftBalance[]>;
 
   // Insights
+  nativeProtocolData: UseState<TNativeProtocolData | undefined>;
   chainStats: UseState<TChainStats>;
   activityStats: UseState<TActivityStats>;
   tokenPortfolioStats: UseState<TTokenPortfolioStats>;
@@ -100,6 +126,7 @@ export const NativeMagicProvider = ({ children }: Props) => {
     chainRecordsWithTokens: {},
     totalUsdValue: 0,
   });
+  const nativeProtocolData = useState<TNativeProtocolData | undefined>(undefined);
   const tokenPortfolioStats = useState<TTokenPortfolioStats>(defaultTokenPortfolioStats);
   const totalGasInETH = useState(0);
 
@@ -115,6 +142,7 @@ export const NativeMagicProvider = ({ children }: Props) => {
         sonicPoints,
 
         // Raw
+        nativeProtocolData,
         tokenPortfolio,
         tokenPortfolioStats,
         allTransactions,

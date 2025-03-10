@@ -9,6 +9,10 @@ export const useNativeMagicInit = () => {
   const { address } = useAccount();
 
   useEffect(() => {
-    letsDoSomeMagic(address as any);
+    const init = async () => {
+      if (!address) return;
+      letsDoSomeMagic(address);
+    };
+    init();
   }, [address]);
 };

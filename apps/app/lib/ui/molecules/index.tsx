@@ -11,6 +11,7 @@ import SwapWidgetModal from './SwapWidgetModal/SwapWidgetModal';
 import SwapButton from './SwapButton/SwapButton';
 import AnalyzeTokenModal from './AnalyzeTokenModal/AnalyzeTokenModal';
 import AnalyzeTokenButton from './AnalyzeTokenButton/AnlyzeTokenButton';
+import DiscoverProtocolButton from './DiscoverProtocol/DiscoverProtocol';
 import AiChatModal from './AiChatModal/AiChatModal';
 import YieldFarmingModal from './YieldFarmingModal/YieldFarmingModal';
 import YieldFarmingButton from './YieldFarmingButton/YieldFarmingButton';
@@ -34,4 +35,5 @@ export {
   InvestmentObjectiveModal,
   AnalyzeTokenModal,
   AnalyzeTokenButton,
+  DiscoverProtocolButton,
 };

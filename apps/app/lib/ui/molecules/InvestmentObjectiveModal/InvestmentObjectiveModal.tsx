@@ -25,7 +25,7 @@ const InvestmentObjectiveModal = ({ open, handleOpen }: Props) => {
             <h1 className="font-bold text-xl">How often do you look at your portfolio?</h1>
             <p>You can always change this later</p>
             <div className="flex gap-3 mt-7">
-              {['Daily', 'Weekly', 'Montly', 'Quarterly', 'Yearly'].map(value => (
+              {['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly'].map(value => (
                 <Button
                   className={clsx(
                     'rounded-3xl py-1 px-4',

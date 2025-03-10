@@ -7,10 +7,11 @@ import {
   useNativeMagicInit,
   formatNumberCompact,
   INVESTMENT_OBJECTIVES,
+  SonicChainApiService,
 } from '@/core';
 import { Atoms, Molecules } from '@/ui';
 import { ThreeStageState } from '@/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import animationData from '../assets/animation/pink-loading.json';
 import Lottie from 'react-lottie';
 import Countup from 'react-countup';
@@ -21,6 +22,8 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { TAddress } from 'chainsmith-sdk/types';
 import { CREAM_COLORS } from '../constants';
+import { TSonicEcosystemApp } from 'chainsmith-sdk/plugins';
+import { a } from '@react-spring/web';
 
 const Dashboard: React.FC<any> = () => {
   useNativeMagicInit();
@@ -34,49 +37,74 @@ const Dashboard: React.FC<any> = () => {
   const [chatWithAiMessage, setChatWithAiMessage] = useState('');
   const [openObjectiveModal, setOpenObjectiveModal] = useState(!getJsonCacheData(key));
 
+  const [apps, setApps] = useState<TSonicEcosystemApp[]>([]);
+  console.log(apps);
+
+  const service = new SonicChainApiService();
+
+  async function getApps() {
+    const apps = await service.getSonicActivePointsApps();
+    // Shuffle the array using Fisher-Yates algorithm
+    for (let i = apps.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [apps[i], apps[j]] = [apps[j], apps[i]];
+    }
+
+    // Return the first `count` elements (or fewer if not enough unique items)
+    const recommendedApps = apps.slice(0, Math.min(3, apps.length));
+
+    setApps(recommendedApps);
+  }
+
+  useEffect(() => {
+    getApps();
+  }, []);
+
   return (
     <React.Fragment>
       <div className="py-3 px-4 rounded-xl flex flex-col max-w-[80rem] shadow-xl w-full h-fit bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg mb-5">
         <div className="flex bg-white rounded-xl gap-z flex-wrap">
           <div className="rounded-lg flex gap-3 shadow-md w-full flex-wrap rounded-xl px-5 py-5">
-            <div className="mr-10">
-              <div className="mb-2 mt-5 flex gap-3 items-center">
-                Total Balance{' '}
-                <RefreshCwIcon
-                  size={12}
-                  onClick={() => letsDoSomeMagic(address as TAddress, true)}
-                />
-              </div>
-              <h1 className="text-3xl font-bold">
-                <Countup
-                  end={selectState(tokenPortfolio).totalUsdValue}
-                  duration={3}
-                  formattingFn={formatNumberUSD}
-                />
-              </h1>
-            </div>
-            <div className="flex gap-3 items-center">
-              <h1 className="text-5xl">🥇</h1>
-              <div>
-                <h1 className="text-sm text-gray-500">#{selectState(sonicPoints)?.rank || 0}</h1>
-                <div>Ecosystem Points</div>
-                <h1 className="text-xl font-bold">
+            <div className="flex justify-between">
+              <div className="mr-10">
+                <div className="mb-2 mt-5 flex gap-3 items-center">
+                  Total Balance{' '}
+                  <RefreshCwIcon
+                    size={12}
+                    onClick={() => letsDoSomeMagic(address as TAddress, true)}
+                  />
+                </div>
+                <h1 className="text-3xl font-bold">
                   <Countup
-                    end={selectState(sonicPoints)?.ecosystem_points || 0}
+                    end={selectState(tokenPortfolio).totalUsdValue}
                     duration={3}
-                    formattingFn={num => formatNumberCompact(num, 2)}
+                    formattingFn={formatNumberUSD}
                   />
                 </h1>
-                <div className="flex gap-3 mt-3">
-                  <Badge color="blue">
-                    AP: {selectState(sonicPoints)?.active_liquidity_points}
-                  </Badge>
-                  <Badge color="green">
-                    PP: {selectState(sonicPoints)?.passive_liquidity_points.toFixed(2)}
-                  </Badge>
-                  <Badge color="orange">
-                    Multiplier x{selectState(sonicPoints)?.loyalty_multiplier}
-                  </Badge>
+              </div>
+              <div className="flex gap-3 items-center">
+                <h1 className="text-5xl">🥇</h1>
+                <div>
+                  <h1 className="text-sm text-gray-500">#{selectState(sonicPoints)?.rank || 0}</h1>
+                  <div>Ecosystem Points</div>
+                  <h1 className="text-xl font-bold">
+                    <Countup
+                      end={selectState(sonicPoints)?.ecosystem_points || 0}
+                      duration={3}
+                      formattingFn={num => formatNumberCompact(num, 2)}
+                    />
+                  </h1>
+                  <div className="flex gap-3 mt-3">
+                    <Badge color="blue">
+                      AP: {selectState(sonicPoints)?.active_liquidity_points}
+                    </Badge>
+                    <Badge color="green">
+                      PP: {selectState(sonicPoints)?.passive_liquidity_points.toFixed(2)}
+                    </Badge>
+                    <Badge color="orange">
+                      Multiplier x{selectState(sonicPoints)?.loyalty_multiplier}
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
@@ -112,6 +140,30 @@ const Dashboard: React.FC<any> = () => {
                 </div>
               )}
             </div>
+            {apps.length !== 0 && (
+              <div>
+                <a className="font-bold hover:text-orange-500" href={apps[0].website}>
+                  <div className="flex items-center">
+                    <img src={apps[0].image} width={30} />
+                    <h1 className="font-bold pl-2">{apps[0].title}</h1>
+                  </div>
+                </a>
+
+                <a className="font-bold hover:text-orange-500" href={apps[1].website}>
+                  <div className="flex items-center pt-2">
+                    <img src={apps[1].image} width={30} />
+                    <h1 className="font-bold pl-2">{apps[1].title}</h1>
+                  </div>
+                </a>
+
+                <a className="font-bold hover:text-orange-500" href={apps[2].website}>
+                  <div className="flex items-center pt-2">
+                    <img src={apps[2].image} width={30} />
+                    <h1 className="font-bold pl-2">{apps[2].title}</h1>
+                  </div>
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </div>

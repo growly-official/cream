@@ -8,6 +8,8 @@
   - Aggregate data from Sonic ecosystem, including yield opportunities, LST APYs, recommended Dapp, MySonic points
 - AI Agent to recommend user to take action on Sonic (rebalance or hold (yield)) to maximize the yield and point farming
 
+![banner](https://github.com/user-attachments/assets/ff5fb2e5-5927-4a4a-b047-0529c7fa08ff)
+
 ## ✨ Key Features of Cream:
 
 Personalized AI Assistant:

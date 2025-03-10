@@ -12,7 +12,7 @@ export const AppBar = () => {
       <div className="flex items-center gap-5">
         <a
           className="font-bold hover:text-orange-500"
-          href="https://github.com/growly-official/cream-monorepo">
+          href="https://github.com/growly-official/cream">
           Github
         </a>
         {isConnected && <ConnectButton showBalance={false} />}

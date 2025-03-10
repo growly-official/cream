@@ -1,6 +1,6 @@
 # Cream
 
-![Frame 139](https://github.com/user-attachments/assets/5f438573-7be1-4318-9d68-9e6455dbc9ad)
+<img src="https://github.com/user-attachments/assets/f2877449-36e2-4e6e-91b5-6d133327f0af" width="200px"/>
 
 
 ## Local Development
